@@ -1,4 +1,6 @@
-use crate::{error::ParseError, hex, splice_command::SpliceCommand};
+use crate::{
+    error::ParseError, hex, splice_command::SpliceCommand, splice_descriptor::SpliceDescriptor,
+};
 
 /// The `SpliceInfoSection` shall be carried in transport packets whereby only one section or
 /// partial section may be in any transport packet. `SpliceInfoSection`s shall always start at the
@@ -202,6 +204,3 @@ impl EncryptionAlgorithm {
         }
     }
 }
-
-#[derive(PartialEq, Eq)]
-pub struct SpliceDescriptor {}
