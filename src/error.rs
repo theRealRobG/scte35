@@ -6,7 +6,14 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseError {
     DecodeHexError(DecodeHexError),
-    UnexpectedEndOfData(UnexpectedEndOfDataErrorInfo),
+    UnexpectedEndOfData {
+        /// The expected minimum number of bits left in the data.
+        expected_minimum_bits_left: u32,
+        /// The actual number of bits left in the data.
+        actual_bits_left: u32,
+        /// A description of what was being attempted to be parsed that resulted in error.
+        description: &'static str,
+    },
     InvalidATSCContentIdentifierInUPID(InvalidATSCContentIdentifierInUPIDInfo),
 }
 
@@ -20,11 +27,15 @@ impl Display for ParseError {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match self {
             ParseError::DecodeHexError(e) => e.fmt(f),
-            ParseError::UnexpectedEndOfData(i) => {
+            ParseError::UnexpectedEndOfData {
+                expected_minimum_bits_left,
+                actual_bits_left,
+                description,
+            } => {
                 write!(
                     f,
                     "Expected at least {} bits left and instead was {} when parsing: {}.",
-                    i.expected_minimum_bits_left, i.actual_bits_left, i.description
+                    expected_minimum_bits_left, actual_bits_left, description
                 )
             }
             ParseError::InvalidATSCContentIdentifierInUPID(i) => {
@@ -42,29 +53,19 @@ impl Display for ParseError {
 
 impl std::error::Error for ParseError {}
 
-#[derive(PartialEq, Eq, Debug, Clone)]
-pub struct UnexpectedEndOfDataErrorInfo {
-    /// The expected minimum number of bits left in the data.
-    pub expected_minimum_bits_left: usize,
-    /// The actual number of bits left in the data.
-    pub actual_bits_left: usize,
-    /// A description of what was being attempted to be parsed that resulted in error.
-    pub description: &'static str,
-}
-
 pub fn validate(
-    bit_reader: &BigEndianReader,
-    expected_minimum_bits_left: usize,
+    bit_reader: &mut BigEndianReader,
+    expected_minimum_bits_left: u32,
     description: &'static str,
 ) -> Result<(), ParseError> {
-    match bit_reader.has_bits_remaining(expected_minimum_bits_left) {
-        true => Ok(()),
-        false => Err(ParseError::UnexpectedEndOfData(
-            UnexpectedEndOfDataErrorInfo {
-                expected_minimum_bits_left,
-                actual_bits_left: bit_reader.bits_remaining().unwrap_or(0),
-                description,
-            },
-        )),
+    let actual_bits_left = bit_reader.refill_lookahead();
+    if actual_bits_left < expected_minimum_bits_left {
+        Err(ParseError::UnexpectedEndOfData {
+            expected_minimum_bits_left,
+            actual_bits_left,
+            description,
+        })
+    } else {
+        Ok(())
     }
 }
