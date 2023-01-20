@@ -351,7 +351,7 @@ impl SegmentationTypeID {
 /// method of collecting other data related to these numbers and therefore they do not need to be
 /// of identical types. These ids may be in other descriptors in the Program and, where the same
 /// identifier is used (ISAN for example), it shall match between Programs.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum SegmentationUPIDType {
     NotUsed,
     UserDefined,

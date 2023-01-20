@@ -56,11 +56,7 @@ impl ATSCContentIdentifier {
     ) -> Result<ATSCContentIdentifier, ParseError> {
         let content_id_length = (upid_length as isize) - 4;
         if content_id_length < 0 {
-            return Err(ParseError::InvalidATSCContentIdentifierInUPID(
-                InvalidATSCContentIdentifierInUPIDInfo {
-                    upid_length: upid_length as usize,
-                },
-            ));
+            return Err(ParseError::InvalidATSCContentIdentifierInUPID { upid_length });
         }
 
         let tsid = bit_reader.peek(16) as u16;
@@ -72,38 +68,16 @@ impl ATSCContentIdentifier {
         bit_reader.consume(9);
         let mut buf = vec![0, content_id_length as u8];
         bit_reader.read_bytes(&mut buf);
-        let content_id = match std::str::from_utf8(&buf) {
-            Ok(id) => id.to_string(),
-            Err(_) => {
-                return Err(ParseError::InvalidATSCContentIdentifierInUPID(
-                    InvalidATSCContentIdentifierInUPIDInfo {
-                        upid_length: upid_length as usize,
-                    },
-                ));
-            }
-        };
 
-        Ok(Self {
-            tsid,
-            end_of_day,
-            unique_for,
-            content_id,
-        })
-    }
-}
-
-#[derive(PartialEq, Eq, Debug, Clone)]
-pub struct InvalidATSCContentIdentifierInUPIDInfo {
-    pub upid_length: usize,
-}
-
-impl InvalidATSCContentIdentifierInUPIDInfo {
-    pub fn static_bytes_length(&self) -> usize {
-        4
-    }
-
-    pub fn calculated_content_id_byte_count(&self) -> usize {
-        self.upid_length - self.static_bytes_length()
+        match std::str::from_utf8(&buf) {
+            Ok(id) => Ok(Self {
+                tsid,
+                end_of_day,
+                unique_for,
+                content_id: id.to_string(),
+            }),
+            Err(_) => Err(ParseError::InvalidATSCContentIdentifierInUPID { upid_length }),
+        }
     }
 }
 

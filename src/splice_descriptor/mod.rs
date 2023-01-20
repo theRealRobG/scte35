@@ -4,11 +4,11 @@ use self::{
     time_descriptor::TimeDescriptor,
 };
 
-mod audio_descriptor;
-mod avail_descriptor;
-mod dtmf_descriptor;
-mod segmentation_descriptor;
-mod time_descriptor;
+pub mod audio_descriptor;
+pub mod avail_descriptor;
+pub mod dtmf_descriptor;
+pub mod segmentation_descriptor;
+pub mod time_descriptor;
 
 /// The `SpliceDescriptor` is a prototype for adding new fields to the `SpliceInfoSection`. All
 /// descriptors included use the same syntax for the first six bytes. In order to allow private
@@ -105,6 +105,7 @@ impl SpliceDescriptor {
     }
 }
 
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum SpliceDescriptorTag {
     AvailDescriptor,
     DTMFDescriptor,

@@ -3,12 +3,12 @@ use self::{
     time_signal::TimeSignal,
 };
 
-mod private_command;
-mod splice_insert;
-mod splice_schedule;
-mod time_signal;
+pub mod private_command;
+pub mod splice_insert;
+pub mod splice_schedule;
+pub mod time_signal;
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum SpliceCommandType {
     SpliceNull,
     SpliceSchedule,
