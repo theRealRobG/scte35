@@ -60,8 +60,8 @@ pub struct ScheduledEvent {
     /// When set to `true`, indicates that the splice event is an opportunity to exit from the
     /// network feed and that the value of `utc_splice_time` shall refer to an intended out point
     /// or program out point. When set to `false`, the flag indicates that the splice event is an
-    /// opportunity to return to the network feed and that the value of `utcSpliceTime` shall refer
-    /// to an intended in point or program in point.
+    /// opportunity to return to the network feed and that the value of `utc_splice_time` shall
+    /// refer to an intended in point or program in point.
     pub out_of_network_indicator: bool,
     /// Information on the type of splice message.
     pub splice_mode: SpliceMode,
@@ -100,7 +100,7 @@ pub enum SpliceMode {
 pub struct ProgramMode {
     /// A 32-bit unsigned integer quantity representing the time of the signalled splice event as
     /// the number of seconds since 00 hours coordinated universal time (UTC), January 6th, 1980,
-    /// with the count of intervening leap seconds included. The `utcSpliceTime` may be converted
+    /// with the count of intervening leap seconds included. The `utc_splice_time` may be converted
     /// to UTC without the use of the GPS_UTC_offset value provided by the System Time table. The
     /// `utc_splice_time` field is used only in the `SpliceSchedule` command.
     pub utc_splice_time: u32,
@@ -111,13 +111,13 @@ pub struct ProgramMode {
 #[derive(PartialEq, Eq)]
 pub struct ComponentMode {
     /// An 8-bit value that identifies the elementary PID stream containing the Splice Point
-    /// specified by the value of `utcSpliceTime` that follows. The value shall be the same as the
-    /// value used in the stream_identification_descriptor() to identify that elementary PID
+    /// specified by the value of `utc_splice_time` that follows. The value shall be the same as
+    /// the value used in the stream_identification_descriptor() to identify that elementary PID
     /// stream.
     pub component_tag: u8,
     /// A 32-bit unsigned integer quantity representing the time of the signalled splice event as
     /// the number of seconds since 00 hours coordinated universal time (UTC), January 6th, 1980,
-    /// with the count of intervening leap seconds included. The `utcSpliceTime` may be converted
+    /// with the count of intervening leap seconds included. The `utc_splice_time` may be converted
     /// to UTC without the use of the GPS_UTC_offset value provided by the System Time table. The
     /// `utc_splice_time` field is used only in the `SpliceSchedule` command.
     pub utc_splice_time: u32,

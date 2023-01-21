@@ -47,7 +47,7 @@ pub enum SpliceDescriptor {
     /// allows a receiver device to generate a legacy analogue DTMF sequence based on a
     /// `SpliceInfoSection` being received.
     DTMFDescriptor(DTMFDescriptor),
-    /// The `segmentationDescriptor` provides an optional extension to the `TimeSignal` and
+    /// The `segmentation_descriptor` provides an optional extension to the `TimeSignal` and
     /// `SpliceInsert` commands that allows for segmentation messages to be sent in a time/video
     /// accurate method. This descriptor shall only be used with the `TimeSignal`, `SpliceInsert`
     /// and the `SpliceNull` commands. The `TimeSignal` or `SpliceInsert` message should be sent at

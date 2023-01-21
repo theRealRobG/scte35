@@ -47,66 +47,66 @@ use crate::{
 pub struct SpliceInfoSection {
     /// This is an 8-bit field. Its value shall be 0xFC.
     pub table_id: u8,
-    /// A two-bit field that indicates if the content preparation system has created a Stream Access
-    /// Point (SAP) at the signaled point in the stream. SAP types are defined in ISO 14496-12, Annex I.
+    /// A two-bit field that indicates if the content preparation system has created a Stream
+    /// Access Point (SAP) at the signaled point in the stream. SAP types are defined in ISO
+    /// 14496-12, Annex I.
     pub sap_type: SAPType,
-    /// An 8-bit unsigned integer field whose function is to allow, in the future, this table type to
-    /// carry parameters that may be structured differently than those defined in the current protocol.
-    /// At present, the only valid value for `protocolVersion` is zero. Non-zero values of
-    /// `protocolVersion` may be used by a future version of this standard to indicate structurally
-    /// different tables.
+    /// An 8-bit unsigned integer field whose function is to allow, in the future, this table type
+    /// to carry parameters that may be structured differently than those defined in the current
+    /// protocol. At present, the only valid value for `protocol_version` is zero. Non-zero values
+    /// of `protocol_version` may be used by a future version of this standard to indicate
+    /// structurally different tables.
     pub protocol_version: u8,
     /// When this is set, it indicates that portions of the `SpliceInfoSection`, starting with
-    /// `spliceCommandType` and ending with and including `E_CRC_32`, are encrypted. When this is not
-    /// set, no part of this message is encrypted. The potentially encrypted portions of the
-    /// `SpliceInfoTable` are indicated by an `E` in the Encrypted column of Table 5 (included in the
-    /// doc-string for this `struct`).
+    /// `splice_command_type` and ending with and including `e_crc_32`, are encrypted. When this is
+    /// not set, no part of this message is encrypted. The potentially encrypted portions of the
+    /// `SpliceInfoTable` are indicated by an `E` in the Encrypted column of Table 5 (included in
+    /// the doc-string for this `struct`).
     pub encrypted_packet: Option<EncryptedPacket>,
-    /// A 33-bit unsigned integer that appears in the clear and that shall be used by a splicing device
-    /// as an offset to be added to the (sometimes) encrypted `ptsTime` field(s) throughout this message,
-    /// to obtain the intended splice time(s). When this field has a zero value, then the `ptsTime`
-    /// field(s) shall be used without an offset. Normally, the creator of a cueing message will place a
-    /// zero value into this field. This adjustment value is the means by which an upstream device, which
-    /// restamps PCR/PTS/DTS, may convey to the splicing device the means by which to convert the
-    /// `ptsTime` field of the message to a newly imposed time domain.
+    /// A 33-bit unsigned integer that appears in the clear and that shall be used by a splicing
+    /// device as an offset to be added to the (sometimes) encrypted `pts_time` field(s) throughout
+    /// this message, to obtain the intended splice time(s). When this field has a zero value, then
+    /// the `pts_time` field(s) shall be used without an offset. Normally, the creator of a cueing
+    /// message will place a zero value into this field. This adjustment value is the means by
+    /// which an upstream device, which restamps PCR/PTS/DTS, may convey to the splicing device the
+    /// means by which to convert the `pts_time` field of the message to a newly imposed time
+    /// domain.
     ///
-    /// It is intended that the first device that restamps PCR/PTS/DTS and that passes the cueing message
-    /// will insert a value into the `ptsAdjustment` field, which is the delta time between this device’s
-    /// input time domain and its output time domain. All subsequent devices, which also restamp
-    /// PCR/PTS/DTS, may further alter the `ptsAdjustment` field by adding their delta time to the
-    /// field’s existing delta time and placing the result back in the `ptsAdjustment` field. Upon each
-    /// alteration of the `ptsAdjustment` field, the altering device shall recalculate and update the
-    /// `CRC_32` field.
+    /// It is intended that the first device that restamps PCR/PTS/DTS and that passes the cueing
+    /// message will insert a value into the `pts_adjustment` field, which is the delta time
+    /// between this device’s input time domain and its output time domain. All subsequent devices,
+    /// which also restamp PCR/PTS/DTS, may further alter the `pts_adjustment` field by adding
+    /// their delta time to the field’s existing delta time and placing the result back in the
+    /// `pts_adjustment` field. Upon each alteration of the `pts_adjustment` field, the altering
+    /// device shall recalculate and update the `crc_32` field.
     ///
-    /// The `ptsAdjustment` shall, at all times, be the proper value to use for conversion of the
-    /// `ptsTime` field to the current time-base. The conversion is done by adding the two fields. In the
-    /// presence of a wrap or overflow condition, the carry shall be ignored.
+    /// The `pts_adjustment` shall, at all times, be the proper value to use for conversion of the
+    /// `pts_time` field to the current time-base. The conversion is done by adding the two fields.
+    /// In the presence of a wrap or overflow condition, the carry shall be ignored.
     pub pts_adjustment: u64,
-    /// A 12-bit value used by the SCTE 35 message provider to assign messages to authorization tiers.
-    /// This field may take any value between 0x000 and 0xFFF. The value of 0xFFF provides backwards
-    /// compatibility and shall be ignored by downstream equipment. When using tier, the message provider
-    /// should keep the entire message in a single transport stream packet.
+    /// A 12-bit value used by the SCTE 35 message provider to assign messages to authorization
+    /// tiers. This field may take any value between 0x000 and 0xFFF. The value of 0xFFF provides
+    /// backwards compatibility and shall be ignored by downstream equipment. When using tier, the
+    /// message provider should keep the entire message in a single transport stream packet.
     pub tier: u16,
     /// Information on the intention of this `SpliceInfoSection`.
     pub splice_command: SpliceCommand,
-    /// Further descriptors in addition to the `spliceCommand`.
+    /// Further descriptors in addition to the `splice_command`.
     pub splice_descriptors: Vec<SpliceDescriptor>,
-    /// This is a 32-bit field that contains the CRC value that gives a zero output of the registers in
-    /// the decoder defined in [MPEG Systems]after processing the entire `SpliceInfoSection`, which
-    /// includes the `tableID` field through the `CRC_32` field. The processing of `CRC_32` shall occur
-    /// prior to decryption of the encrypted fields and shall utilize the encrypted fields in their
-    /// encrypted state.
+    /// This is a 32-bit field that contains the CRC value that gives a zero output of the
+    /// registers in the decoder defined in [MPEG Systems]after processing the entire
+    /// `SpliceInfoSection`, which includes the `table_id` field through the `crc_32` field. The
+    /// processing of `crc_32` shall occur prior to decryption of the encrypted fields and shall
+    /// utilize the encrypted fields in their encrypted state.
     pub crc_32: u32,
-    /// A list of errors that have not caused the message to be un-parsable, but are inconsistent with the
-    /// specification. An example of this could be a splice command who's computed length after parsing did
-    /// not match the indicated length of the command.
+    /// A list of errors that have not caused the message to be un-parsable, but are inconsistent
+    /// with the specification. An example of this could be a splice command who's computed length
+    /// after parsing did not match the indicated length of the command.
     pub non_fatal_errors: Vec<ParseError>,
 }
 
 impl SpliceInfoSection {
     /// Creates a `SpliceInfoSection` using the provided hex encoded string.
-    /// - Parameter hexString: A string of hex encoded SCTE-35 data.
-    /// - Throws: `SCTE35ParserError`
     pub fn from_hex_string(hex_string: &str) -> Result<SpliceInfoSection, ParseError> {
         let data = hex::decode_hex(hex_string)?;
         Self::from(data)
@@ -143,8 +143,8 @@ impl SAPType {
     }
 }
 
-/// This indicates that portions of the `SpliceInfoSection`, starting with `spliceCommandType` and
-/// ending with and including `E_CRC_32`, are encrypted.
+/// This indicates that portions of the `SpliceInfoSection`, starting with `splice_command_type`
+/// and ending with and including `e_crc_32`, are encrypted.
 #[derive(PartialEq, Eq)]
 pub struct EncryptedPacket {
     /// The `encryption_algorithm` field of the `SpliceInfoSection` is a 6-bit value. All Data
@@ -155,7 +155,7 @@ pub struct EncryptedPacket {
     pub encryption_algorithm: Option<EncryptionAlgorithm>,
     /// An 8-bit unsigned integer that conveys which control word (key) is to be used to decrypt
     /// the message. The splicing device may store up to 256 keys previously provided for this
-    /// purpose. When the `encryptedPacket` is `false`, this field is present but undefined.
+    /// purpose. When the `encrypted_packet` is `false`, this field is present but undefined.
     pub cw_index: u8,
     /// When encryption is used, this field is a function of the particular encryption algorithm
     /// chosen. Since some encryption algorithms require a specific length for the encrypted data,
@@ -168,11 +168,11 @@ pub struct EncryptedPacket {
     /// registers in the decoder defined in [MPEG Systems] after processing the entire decrypted
     /// portion of the `SpliceInfoSection`. This field is intended to give an indication that the
     /// decryption was performed successfully. Hence, the zero output is obtained following
-    /// decryption and by processing the fields `SpliceCommandType` through `E_CRC_32`.
+    /// decryption and by processing the fields `SpliceCommandType` through `e_crc_32`.
     pub e_crc_32: u32,
 }
 
-/// The `encryptionAlgorithm` field of the `SpliceInfoSection` is a 6-bit value. All Data
+/// The `encryption_algorithm` field of the `SpliceInfoSection` is a 6-bit value. All Data
 /// Encryption Standard variants use a 64-bit key (actually 56 bits plus a checksum) to encrypt or
 /// decrypt a block of 8 bytes. In the case of triple DES, there will need to be 3 64-bit keys, one
 /// for each of the three passes of the DES algorithm. The “standard” triple DES actually uses two

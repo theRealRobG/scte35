@@ -18,7 +18,7 @@ use crate::error::{validate, ParseError};
 pub struct BreakDuration {
     /// A flag that, when set to `true`, denotes that the `duration` shall be used by the splicing
     /// device to know when the return to the network feed (end of break) is to take place. A
-    /// `SpliceInsert` command with `outOfNetworkIndicator` set to `false` is not intended to be
+    /// `SpliceInsert` command with `out_of_network_indicator` set to `false` is not intended to be
     /// sent to end this break. When this flag is `false`, the `duration` field, if present, is not
     /// required to end the break because a new `SpliceInsert` command will be sent to end the
     /// break. In this case, the presence of the `BreakDuration` field acts as a safety mechanism
@@ -43,7 +43,7 @@ impl BreakDuration {
     }
 }
 
-/// The `SpliceTime` structure, when modified by `ptsAdjustment`, specifies the time of the splice
+/// The `SpliceTime` structure, when modified by `pts_adjustment`, specifies the time of the splice
 /// event.
 /**
 ```
@@ -60,7 +60,7 @@ impl BreakDuration {
 #[derive(PartialEq, Eq)]
 pub struct SpliceTime {
     /// A 33-bit field that indicates time in terms of ticks of the program's 90 kHz clock. This
-    /// field, when modified by `ptsAdjustment`, represents the time of the intended splice point.
+    /// field, when modified by `pts_adjustment`, represents the time of the intended splice point.
     pub pts_time: Option<u64>,
 }
 

@@ -19,7 +19,7 @@ use crate::time::SpliceTime;
 */
 #[derive(PartialEq, Eq)]
 pub struct TimeSignal {
-    /// The `SpliceTime` structure, when modified by `ptsAdjustment`, specifies the time of the
+    /// The `SpliceTime` structure, when modified by `pts_adjustment`, specifies the time of the
     /// splice event.
     pub splice_time: SpliceTime,
 }

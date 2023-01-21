@@ -412,7 +412,7 @@ pub enum SegmentationUPID {
     ISCI(String),
     /// Defined by the Advertising Digital Identification, LLC group. 12 characters; 4 alpha
     /// characters (company identification prefix) followed by 8 alphanumeric characters. (See
-    /// `adID`)
+    /// `AdID`)
     AdID(String),
     /// See [SMPTE 330]
     UMID(String),

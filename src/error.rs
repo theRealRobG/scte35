@@ -68,9 +68,11 @@ pub enum ParseError {
         actual_descriptor_loop_length_in_bits: u32,
     },
     UnexpectedSpliceDescriptorLength {
-        /// This is the number of bits that the `SpliceDescriptor` was expected to have as declared via `descriptor_length`.
+        /// This is the number of bits that the `SpliceDescriptor` was expected to have as declared
+        /// via `descriptor_length`.
         declared_splice_descriptor_length_in_bits: u32,
-        /// This is the number of bits that the `SpliceDescriptor` actually had after parsing had completed.
+        /// This is the number of bits that the `SpliceDescriptor` actually had after parsing had
+        /// completed.
         actual_splice_descriptor_length_in_bits: u32,
         /// The tag for the splice descriptor.
         splice_descriptor_tag: SpliceDescriptorTag,

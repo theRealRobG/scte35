@@ -1,9 +1,7 @@
-mod atsc;
-mod error;
+pub mod atsc;
+pub mod error;
 mod hex;
-mod splice_command;
-mod splice_descriptor;
-mod splice_info_section;
-mod time;
-
-pub use splice_info_section::SpliceInfoSection;
+pub mod splice_command;
+pub mod splice_descriptor;
+pub mod splice_info_section;
+pub mod time;

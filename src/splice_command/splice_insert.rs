@@ -41,7 +41,7 @@ pub struct SpliceInsert {
     pub scheduled_event: Option<ScheduledEvent>,
 }
 impl SpliceInsert {
-    /// When set to `true` indicates that a previously sent splice event, identified by `eventId`,
+    /// When set to `true` indicates that a previously sent splice event, identified by `event_id`,
     /// has been cancelled.
     pub fn is_cancelled(&self) -> bool {
         self.scheduled_event == None
@@ -51,10 +51,10 @@ impl SpliceInsert {
 #[derive(PartialEq, Eq)]
 pub struct ScheduledEvent {
     /// When set to `true`, indicates that the splice event is an opportunity to exit from the
-    /// network feed and that the value of `spliceTime`, as modified by `ptsAdjustment`, shall
+    /// network feed and that the value of `splice_time`, as modified by `pts_adjustment`, shall
     /// refer to an intended out point or program out point. When set to `false`, the flag
     /// indicates that the splice event is an opportunity to return to the network feed and that
-    /// the value of `spliceTime`, as modified by `ptsAdjustment`, shall refer to an intended in
+    /// the value of `splice_time`, as modified by `pts_adjustment`, shall refer to an intended in
     /// point or program in point.
     pub out_of_network_indicator: bool,
     /// When this flag is `true`, it indicates the absence of the `splice_time` field and that the
@@ -115,7 +115,7 @@ pub struct ComponentMode {
     /// value used in the stream_identification_descriptor() to identify that elementary PID
     /// stream.
     pub component_tag: u8,
-    /// The `SpliceTime` structure, when modified by `ptsAdjustment`, specifies the time of the
+    /// The `SpliceTime` structure, when modified by `pts_adjustment`, specifies the time of the
     /// splice event.
     pub splice_time: Option<SpliceTime>,
 }

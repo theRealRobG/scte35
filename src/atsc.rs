@@ -25,25 +25,25 @@ pub struct ATSCContentIdentifier {
     /// established by appropriate authorities.
     pub tsid: u16,
     /// This 5-bit unsigned integer shall be set to the hour of the day in UTC in which the
-    /// broadcast day ends and the instant after which the `contentID` values may be re-used
-    /// according to `uniqueFor`. The value of this field shall be in the range of 0–23. The
+    /// broadcast day ends and the instant after which the `content_id` values may be re-used
+    /// according to `unique_for`. The value of this field shall be in the range of 0–23. The
     /// values 24–31 are reserved. Note that the value of this field is expected to be static
     /// per broadcaster.
     pub end_of_day: u8,
     /// This 9-bit unsigned integer shall be set to the number of days, rounded up, measured
-    /// relative to the hour indicated by `endOfDay`, during which the `contentID` value is not
+    /// relative to the hour indicated by `end_of_day`, during which the `content_id` value is not
     /// reassigned to different content. The value shall be in the range 1 to 511. The value
     /// zero shall be forbidden. The value 511 shall have the special meaning of “indefinitely”.
     /// Note that the value of this field is expected to be essentially static per broadcaster,
     /// only changing when the method of house numbering is changed. Note also that decoders can
-    /// treat stored `contentID` values as unique until the `uniqueFor` fields expire, which can
-    /// be implemented by decrementing all stored `uniqueFor` fields by one every day at the
-    /// `endOfDay` until they reach zero.
+    /// treat stored `content_id` values as unique until the `unique_for` fields expire, which can
+    /// be implemented by decrementing all stored `unique_for` fields by one every day at the
+    /// `end_of_day` until they reach zero.
     pub unique_for: u16,
     /// This variable length field shall be set to the value of the identifier according to the
     /// house number system or systems for the value of `tsid`. Each such value shall not be
     /// assigned to different content within the period of uniqueness set by the values in the
-    /// `endOfDay` and `uniqueFor` fields. The identifier may be any combination of human
+    /// `end_of_day` and `unique_for` fields. The identifier may be any combination of human
     /// readable and/or binary values and need not exactly match the form of a house number, not
     /// to exceed 242 bytes.
     pub content_id: String,

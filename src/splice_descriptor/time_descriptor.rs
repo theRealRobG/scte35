@@ -1,7 +1,7 @@
 /// The `TimeDescriptor` is an implementation of a `SpliceDescriptor`. It provides an optional
 /// extension to the `SpliceInsert`, `SpliceNull` and `TimeSignal` commands that allows a
 /// programmer’s wall clock time to be sent to a client. For the highest accuracy, this descriptor
-/// should be used with a `TimeSignal` or `SpliceInsert` command that has a `ptsTime` defined. The
+/// should be used with a `TimeSignal` or `SpliceInsert` command that has a `pts_time` defined. The
 /// repetition rate of this descriptor should be at least once every 5 seconds. When it is the only
 /// descriptor present in the `TimeSignal` or `SpliceNull` command, then the encoder should not
 /// insert a key frame.
