@@ -56,7 +56,7 @@ use crate::atsc::ATSCContentIdentifier;
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SegmentationDescriptor {
     /// This 32-bit number is used to identify the owner of the descriptor. The identifier shall
     /// have a value of 0x43554549 (ASCII “CUEI”).
@@ -75,7 +75,7 @@ impl SegmentationDescriptor {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ScheduledEvent {
     /// This is provided to facilitate implementations that use methods that are out of scope of
     /// this standard to process and manage this Segment.
@@ -116,7 +116,7 @@ pub struct ScheduledEvent {
 
 /// This is provided to facilitate implementations that use methods that are out of scope of this
 /// standard to process and manage this Segment.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct DeliveryRestrictions {
     /// This shall have the value of `true` when there are no restrictions with respect to web
     /// delivery of this Segment. This shall have the value of `false` to signal that restrictions
@@ -139,7 +139,7 @@ pub struct DeliveryRestrictions {
 /// This field signals three pre-defined groups of devices. The population of each group is
 /// independent and the groups are non-hierarchical. The delivery and format of the messaging to
 /// define the devices contained in the groups is out of the scope of this standard.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum DeviceRestrictions {
     /// 00 - This Segment is restricted for a class of devices defined by an out of band message
     /// that describes which devices are excluded.
@@ -164,7 +164,7 @@ impl DeviceRestrictions {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ComponentSegmentation {
     /// An 8-bit value that identifies the elementary PID stream containing the Segmentation Point
     /// specified by the value of `SpliceTime` that follows. The value shall be the same as the value
@@ -181,7 +181,7 @@ pub struct ComponentSegmentation {
     pub pts_offset: u64,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SubSegment {
     /// If specified, this field provides identification for a specific sub-Segment within a
     /// collection of sub-Segments. This value, when utilized, is expected to be set to one for the
@@ -197,7 +197,7 @@ pub struct SubSegment {
 /// `SegmentationTypeID` is `0x01` (`ContentIdentification`), the value of `SegmentationUPIDType`
 /// shall be non-zero. If `segmentation_upid_length` is zero, then `SegmentationTypeID` shall be
 /// set to `0x00` for Not Indicated.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SegmentationTypeID {
     /// 0x00
     NotIndicated,
@@ -401,7 +401,7 @@ impl SegmentationUPIDType {
 /// method of collecting other data related to these numbers and therefore they do not need to be
 /// of identical types. These ids may be in other descriptors in the Program and, where the same
 /// identifier is used (ISAN for example), it shall match between Programs.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SegmentationUPID {
     /// The `SegmentationUPID` is not defined and is not present in the descriptor.
     NotUsed,
@@ -486,7 +486,7 @@ impl SegmentationUPID {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ManagedPrivateUPID {
     pub format_specifier: String,
     pub private_data: Vec<u8>,

@@ -32,7 +32,7 @@ use crate::time::{BreakDuration, SpliceTime};
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SpliceInsert {
     /// A 32-bit unique splice event identifier.
     pub event_id: u32,
@@ -48,7 +48,7 @@ impl SpliceInsert {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ScheduledEvent {
     /// When set to `true`, indicates that the splice event is an opportunity to exit from the
     /// network feed and that the value of `splice_time`, as modified by `pts_adjustment`, shall
@@ -87,7 +87,7 @@ pub struct ScheduledEvent {
 }
 
 /// Information on the type of splice message.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SpliceMode {
     /// Indicates that the message refers to a Program Splice Point and that the mode is the
     /// Program Splice Mode whereby all PIDs/components of the program are to be spliced.
@@ -99,7 +99,7 @@ pub enum SpliceMode {
 
 /// Indicates that the message refers to a Program Splice Point and that the mode is the Program
 /// Splice Mode whereby all PIDs/components of the program are to be spliced.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ProgramMode {
     /// The `SpliceTime` structure, when modified by `pts_adjustment`, specifies the time of the
     /// splice event.
@@ -108,7 +108,7 @@ pub struct ProgramMode {
 
 /// Indicates that the mode is the Component Splice Mode whereby each component that is intended to
 /// be spliced will be listed separately by the syntax that follows.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ComponentMode {
     /// An 8-bit value that identifies the elementary PID stream containing the Splice Point
     /// specified by the value of `splice_time` that follows. The value shall be the same as the

@@ -14,7 +14,7 @@ use crate::error::{validate, ParseError};
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct BreakDuration {
     /// A flag that, when set to `true`, denotes that the `duration` shall be used by the splicing
     /// device to know when the return to the network feed (end of break) is to take place. A
@@ -57,7 +57,7 @@ impl BreakDuration {
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SpliceTime {
     /// A 33-bit field that indicates time in terms of ticks of the program's 90 kHz clock. This
     /// field, when modified by `pts_adjustment`, represents the time of the intended splice point.

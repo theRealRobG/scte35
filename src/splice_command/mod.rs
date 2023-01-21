@@ -31,7 +31,7 @@ impl SpliceCommandType {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SpliceCommand {
     /// The `SpliceNull` command is provided for extensibility of the standard. The `SpliceNull`
     /// command allows a `SpliceInfoTable` to be sent that can carry descriptors without having to

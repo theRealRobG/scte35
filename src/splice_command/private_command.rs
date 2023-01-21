@@ -12,7 +12,7 @@
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct PrivateCommand {
     /// This 32-bit number is used to identify the owner of the command.
     ///

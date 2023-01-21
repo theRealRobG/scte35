@@ -43,7 +43,7 @@ use crate::{
  //   CRC_32                          32 rpchof
  // }
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SpliceInfoSection {
     /// This is an 8-bit field. Its value shall be 0xFC.
     pub table_id: u8,
@@ -120,7 +120,7 @@ impl SpliceInfoSection {
 /// A two-bit field that indicates if the content preparation system has created a Stream Access
 /// Point (SAP) at the signaled point in the stream. SAP types are defined in ISO 14496-12, Annex
 /// I.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SAPType {
     /// Closed GOP with no leading pictures
     Type1,
@@ -145,7 +145,7 @@ impl SAPType {
 
 /// This indicates that portions of the `SpliceInfoSection`, starting with `splice_command_type`
 /// and ending with and including `e_crc_32`, are encrypted.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct EncryptedPacket {
     /// The `encryption_algorithm` field of the `SpliceInfoSection` is a 6-bit value. All Data
     /// Encryption Standard variants use a 64-bit key (actually 56 bits plus a checksum) to encrypt
@@ -177,7 +177,7 @@ pub struct EncryptedPacket {
 /// decrypt a block of 8 bytes. In the case of triple DES, there will need to be 3 64-bit keys, one
 /// for each of the three passes of the DES algorithm. The “standard” triple DES actually uses two
 /// keys, where the first and third keys are identical.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum EncryptionAlgorithm {
     /// No encryption
     NoEncryption,

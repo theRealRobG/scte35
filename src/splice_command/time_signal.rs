@@ -17,7 +17,7 @@ use crate::time::SpliceTime;
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct TimeSignal {
     /// The `SpliceTime` structure, when modified by `pts_adjustment`, specifies the time of the
     /// splice event.

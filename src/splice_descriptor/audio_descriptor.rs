@@ -27,7 +27,7 @@ use crate::atsc::{AudioCodingMode, BitStreamMode};
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct AudioDescriptor {
     /// This 32-bit number is used to identify the owner of the descriptor. The identifier shall
     /// have a value of 0x43554549 (ASCII “CUEI”).
@@ -36,7 +36,7 @@ pub struct AudioDescriptor {
     pub components: Vec<Component>,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct Component {
     /// An optional 8-bit value that identifies the elementary PID stream containing the audio
     /// channel that follows. If used, the value shall be the same as the value used in the
@@ -73,14 +73,14 @@ pub struct Component {
 /// the MSB is 0, the lower 3 bits are set to the same value as the acmod field in the AC-3
 /// elementary stream. When the MSB field is 1, the lower 3 bits indicate the maximum number of
 /// encoded audio channels (counting the lfe channel as 1).
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum NumChannels {
     AudioCodingMode(AudioCodingMode),
     MaxNumberOfEncodedChannels(MaxNumberOfEncodedChannels),
 }
 
 /// Indicates the maximum number of encoded audio channels (counting the lfe channel as 1).
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum MaxNumberOfEncodedChannels {
     One,
     Two,

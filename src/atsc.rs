@@ -16,7 +16,7 @@ use crate::error::ParseError;
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ATSCContentIdentifier {
     /// This 16 bit unsigned integer field shall contain a value of `transport_stream_id` per
     /// section 6.3.1 of A/65 [3]. Note: The assigning authority for these values for the United
@@ -108,7 +108,7 @@ impl ATSCContentIdentifier {
 // ‘111’ 3/2               5       L, C, R, SL, SR
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum AudioCodingMode {
     /**
     ```
@@ -200,7 +200,7 @@ impl AudioCodingMode {
 // ‘111’ ‘010’ - ‘111’ main audio service: karaoke
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum BitStreamMode {
     CompleteMain,
     MusicAndEffects,

@@ -37,7 +37,7 @@
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct TimeDescriptor {
     /// This 32-bit number is used to identify the owner of the descriptor. The identifier shall
     /// have a value of 0x43554549 (ASCII “CUEI”).

@@ -34,7 +34,7 @@ pub mod time_descriptor;
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SpliceDescriptor {
     /// The `AvailDescriptor` provides an optional extension to the `SpliceInsert` command that
     /// allows an authorization identifier to be sent for an avail. Multiple copies of this

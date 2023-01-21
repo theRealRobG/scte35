@@ -34,12 +34,12 @@ use crate::time::BreakDuration;
 // }
 ```
 */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct SpliceSchedule {
     pub events: Vec<Event>,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct Event {
     /// A 32-bit unique splice event identifier.
     pub event_id: u32,
@@ -55,7 +55,7 @@ impl Event {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ScheduledEvent {
     /// When set to `true`, indicates that the splice event is an opportunity to exit from the
     /// network feed and that the value of `utc_splice_time` shall refer to an intended out point
@@ -84,7 +84,7 @@ pub struct ScheduledEvent {
 }
 
 /// Information on the type of splice message.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum SpliceMode {
     /// Indicates that the message refers to a Program Splice Point and that the mode is the
     /// Program Splice Mode whereby all PIDs/components of the program are to be spliced.
@@ -96,7 +96,7 @@ pub enum SpliceMode {
 
 /// Indicates that the message refers to a Program Splice Point and that the mode is the Program
 /// Splice Mode whereby all PIDs/components of the program are to be spliced.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ProgramMode {
     /// A 32-bit unsigned integer quantity representing the time of the signalled splice event as
     /// the number of seconds since 00 hours coordinated universal time (UTC), January 6th, 1980,
@@ -108,7 +108,7 @@ pub struct ProgramMode {
 
 /// Indicates that the mode is the Component Splice Mode whereby each component that is intended to
 /// be spliced will be listed separately by the syntax that follows.
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct ComponentMode {
     /// An 8-bit value that identifies the elementary PID stream containing the Splice Point
     /// specified by the value of `utc_splice_time` that follows. The value shall be the same as
