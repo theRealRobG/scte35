@@ -1,6 +1,6 @@
-use crate::{atsc::ATSCContentIdentifier, bit_reader::Bits, error::ParseError, hex::encode_hex};
-
 use super::DescriptorLengthExpectation;
+use crate::{atsc::ATSCContentIdentifier, bit_reader::Bits, error::ParseError, hex::encode_hex};
+use ::std::fmt::Write;
 
 /// The `SegmentationDescriptor` is an implementation of a `SpliceDescriptor`. It provides an
 /// optional extension to the `TimeSignal` and `SpliceInsert` commands that allows for segmentation
@@ -754,7 +754,9 @@ impl SegmentationUPID {
                 validate(upid_length, 32, upid_type)?;
                 let mut umid_vec = vec![];
                 for _ in 0..8 {
-                    umid_vec.push(format!("{:0>8}", bits.u32(32)));
+                    let mut s = String::with_capacity(8);
+                    write!(&mut s, "{:08x}", bits.u32(32)).unwrap();
+                    umid_vec.push(s.to_uppercase());
                 }
                 Ok(Self::UMID(umid_vec.join(".")))
             }

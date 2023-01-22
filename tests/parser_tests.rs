@@ -568,107 +568,98 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
     );
 }
 
-// // MARK: - Examples from https://openidconnectweb.azurewebsites.net/Cue
+// MARK: - Examples from https://openidconnectweb.azurewebsites.net/Cue
 
-// #[test]
-// fn test_timeSignal_segmentationDescriptor_adID() {
-//     let base64_string = "/DA4AAAAAAAA///wBQb+AAAAAAAiAiBDVUVJAAAAA3//AAApPWwDDEFCQ0QwMTIzNDU2SBAAAGgCL9A=";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::TimeSignal(TimeSignal { splice_time: SpliceTime { pts_time: Some(0) } }),
-//         splice_descriptors: vec![
-//             SpliceDescriptor::SegmentationDescriptor(
-//                 SegmentationDescriptor(
-//                     identifier: 1129661769,
-//                     event_id: 3,
-//                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
-//                         component_segments: None,
-//                         segmentation_duration: 2702700,
-//                         segmentation_upid: .adID("ABCD0123456H"),
-//                         segmentation_type_id: SegmentationTypeID::ProgramStart,
-//                         segment_num: 0,
-//                         segments_expected: 0,
-//                         sub_segment: None
-//                     )
-//                 )
-//             )
-//         ],
-//         crc_32: 0x68022FD0,
-//         non_fatal_errors: vec![],
-//     )
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_bytes(
-//             BASE64_STANDARD
-//                 .decode(base64_string)
-//                 .expect("should be valid base64")
-//         )
-//         .expect("should be valid splice info section from base64"),
-//         "unexpected splice info section from base64"
-//     );
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_hex_string(hex_string)
-//             .expect("should be valid splice info section from hex"),
-//         "unexpected splice info section from hex"
-//     );
-// }
+#[test]
+fn test_time_signal_segmentation_descriptor_ad_id() {
+    let base64_string =
+        "/DA4AAAAAAAA///wBQb+AAAAAAAiAiBDVUVJAAAAA3//AAApPWwDDEFCQ0QwMTIzNDU2SBAAAGgCL9A=";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::TimeSignal(TimeSignal {
+            splice_time: SpliceTime { pts_time: Some(0) },
+        }),
+        splice_descriptors: vec![SpliceDescriptor::SegmentationDescriptor(
+            SegmentationDescriptor {
+                identifier: 1129661769,
+                event_id: 3,
+                scheduled_event: Some(segmentation_descriptor::ScheduledEvent {
+                    delivery_restrictions: None,
+                    component_segments: None,
+                    segmentation_duration: Some(2702700),
+                    segmentation_upid: SegmentationUPID::AdID(String::from("ABCD0123456H")),
+                    segmentation_type_id: SegmentationTypeID::ProgramStart,
+                    segment_num: 0,
+                    segments_expected: 0,
+                    sub_segment: None,
+                }),
+            },
+        )],
+        crc_32: 0x68022FD0,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_bytes(
+            BASE64_STANDARD
+                .decode(base64_string)
+                .expect("should be valid base64")
+        )
+        .expect("should be valid splice info section from base64"),
+        "unexpected splice info section from base64"
+    );
+}
 
-// #[test]
-// fn test_timeSignal_segmentationDescriptor_UMID() {
-//     let base64_string = "/DBHAAAAAAAA///wBQb+AAAAAAAxAi9DVUVJAAAAA3+/BCAGCis0AQEBBQEBDSATAAAA0skDbI8ZU0OrcBTS1xi/2hEAAPUV9+0=";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::TimeSignal(TimeSignal { splice_time: SpliceTime { pts_time: Some(0) } }),
-//         splice_descriptors: vec![
-//             SpliceDescriptor::SegmentationDescriptor(
-//                 SegmentationDescriptor(
-//                     identifier: 1129661769,
-//                     event_id: 3,
-//                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
-//                         component_segments: None,
-//                         segmentation_duration: None,
-//                         segmentation_upid: .umid("060A2B34.01010105.01010D20.13000000.D2C9036C.8F195343.AB7014D2.D718BFDA"),
-//                         segmentation_type_id: SegmentationTypeID::ProgramEnd,
-//                         segment_num: 0,
-//                         segments_expected: 0,
-//                         sub_segment: None
-//                     )
-//                 )
-//             )
-//         ],
-//         crc_32: 0xF515F7ED,
-//         non_fatal_errors: vec![],
-//     )
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_bytes(
-//             BASE64_STANDARD
-//                 .decode(base64_string)
-//                 .expect("should be valid base64")
-//         )
-//         .expect("should be valid splice info section from base64"),
-//         "unexpected splice info section from base64"
-//     );
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_hex_string(hex_string)
-//             .expect("should be valid splice info section from hex"),
-//         "unexpected splice info section from hex"
-//     );
-// }
+#[test]
+fn test_time_signal_segmentation_descriptor_umid() {
+    let base64_string = "/DBHAAAAAAAA///wBQb+AAAAAAAxAi9DVUVJAAAAA3+/BCAGCis0AQEBBQEBDSATAAAA0skDbI8ZU0OrcBTS1xi/2hEAAPUV9+0=";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::TimeSignal(TimeSignal {
+            splice_time: SpliceTime { pts_time: Some(0) },
+        }),
+        splice_descriptors: vec![SpliceDescriptor::SegmentationDescriptor(
+            SegmentationDescriptor {
+                identifier: 1129661769,
+                event_id: 3,
+                scheduled_event: Some(segmentation_descriptor::ScheduledEvent {
+                    delivery_restrictions: None,
+                    component_segments: None,
+                    segmentation_duration: None,
+                    segmentation_upid: SegmentationUPID::UMID(String::from(
+                        "060A2B34.01010105.01010D20.13000000.D2C9036C.8F195343.AB7014D2.D718BFDA",
+                    )),
+                    segmentation_type_id: SegmentationTypeID::ProgramEnd,
+                    segment_num: 0,
+                    segments_expected: 0,
+                    sub_segment: None,
+                }),
+            },
+        )],
+        crc_32: 0xF515F7ED,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_bytes(
+            BASE64_STANDARD
+                .decode(base64_string)
+                .expect("should be valid base64")
+        )
+        .expect("should be valid splice info section from base64"),
+        "unexpected splice info section from base64"
+    );
+}
 
 // #[test]
 // fn test_timeSignal_segmentationDescriptor_ISAN_programStart() {
@@ -687,7 +678,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 6,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2702700,
 //                         segmentation_upid: .isan("0000-0000-3A8D-0000-Z-0000-0000-6"),
@@ -737,7 +728,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 6,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .isan("0000-0000-3A8D-0000-Z-0000-0000-6"),
@@ -787,7 +778,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 3,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2702700,
 //                         segmentation_upid: .tid("MV0004146400"),
@@ -837,7 +828,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 3,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .tid("MV0004146400"),
@@ -887,7 +878,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 1644168586,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 5400000,
 //                         segmentation_upid: .adi("SIGNAL:DR21Z07ZT8a8asniuUheiA=="),
@@ -937,7 +928,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 1644168586,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .adi("SIGNAL:3-sQ4NgFT0OjPsG4WqUQow"),
@@ -987,7 +978,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 3,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2702700,
 //                         segmentation_upid: .eidr("10.5240/F85A-E100-B068-5B8F-B1C8-T"),
@@ -1053,7 +1044,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 3,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2702700,
 //                         segmentation_upid: .atscContentIdentifier(
@@ -1110,7 +1101,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 3,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .atscContentIdentifier(
@@ -1167,7 +1158,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 2230439776,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: SegmentationUPID::TI(String::from("0x00000000072E106A")),
@@ -1183,7 +1174,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 2230447952,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2847600,
 //                         segmentation_upid: SegmentationUPID::TI(String::from("0x00000000072D5CC7")),
@@ -1199,7 +1190,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 2230448029,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .mpu(
@@ -1309,7 +1300,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 11,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2700000,
 //                         segmentation_upid: .adsInformation("ADS-UPID:aa85bbb6-5c43-4b6a-bebb-ee3b13eb7999"),
@@ -1359,7 +1350,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 11,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .adsInformation("ADS-UPID:aa85bbb6-5c43-4b6a-bebb-ee3b13eb7999"),
@@ -1409,7 +1400,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 10,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 2700000,
 //                         segmentation_upid: .uri(URL(string: "urn:uuid:aa85bbb6-5c43-4b6a-bebb-ee3b13eb7999")!),
@@ -1459,7 +1450,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 10,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: None,
 //                         segmentation_upid: .uri(URL(string: "urn:uuid:aa85bbb6-5c43-4b6a-bebb-ee3b13eb7999")!),
@@ -1870,7 +1861,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
 //                     identifier: 1129661769,
 //                     event_id: 2,
 //                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         deliveryRestrictions: nil,
+//                         delivery_restrictions: None,
 //                         component_segments: None,
 //                         segmentation_duration: 5400000,
 //                         segmentation_upid: .mid(
