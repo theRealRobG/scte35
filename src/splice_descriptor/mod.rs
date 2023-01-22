@@ -1,3 +1,5 @@
+use crate::{bit_reader::Bits, error::ParseError};
+
 use self::{
     audio_descriptor::AudioDescriptor, avail_descriptor::AvailDescriptor,
     dtmf_descriptor::DTMFDescriptor, segmentation_descriptor::SegmentationDescriptor,
@@ -113,6 +115,22 @@ pub enum SpliceDescriptorTag {
     TimeDescriptor,
     AudioDescriptor,
 }
+
+impl TryFrom<u8> for SpliceDescriptorTag {
+    type Error = ParseError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x00 => Ok(SpliceDescriptorTag::AvailDescriptor),
+            0x01 => Ok(SpliceDescriptorTag::DTMFDescriptor),
+            0x02 => Ok(SpliceDescriptorTag::SegmentationDescriptor),
+            0x03 => Ok(SpliceDescriptorTag::TimeDescriptor),
+            0x04 => Ok(SpliceDescriptorTag::AudioDescriptor),
+            _ => Err(ParseError::UnrecognisedSpliceDescriptorTag(value)),
+        }
+    }
+}
+
 impl SpliceDescriptorTag {
     pub fn value(&self) -> u8 {
         match *self {
@@ -121,6 +139,77 @@ impl SpliceDescriptorTag {
             SpliceDescriptorTag::SegmentationDescriptor => 0x02,
             SpliceDescriptorTag::TimeDescriptor => 0x03,
             SpliceDescriptorTag::AudioDescriptor => 0x04,
+        }
+    }
+}
+
+struct DescriptorLengthExpectation {
+    descriptor_bits_length: u32,
+    bits_remaining_before_descriptor: isize,
+    expected_bits_remaining_after_descriptor: isize,
+}
+
+impl DescriptorLengthExpectation {
+    fn try_from(bits: &mut Bits, validation_description: &'static str) -> Result<Self, ParseError> {
+        let descriptor_bits_length = bits.u32(8) * 8;
+        bits.validate(descriptor_bits_length, validation_description)?;
+        let bits_remaining_before_descriptor = bits.bits_remaining() as isize;
+        let expected_bits_remaining_after_descriptor =
+            bits_remaining_before_descriptor - (descriptor_bits_length as isize);
+
+        Ok(Self {
+            descriptor_bits_length,
+            bits_remaining_before_descriptor,
+            expected_bits_remaining_after_descriptor,
+        })
+    }
+
+    fn validate_non_fatal(&self, bits: &mut Bits, splice_descriptor_tag: SpliceDescriptorTag) {
+        let bits_remaining = bits.bits_remaining();
+        if self.expected_bits_remaining_after_descriptor != (bits_remaining as isize) {
+            bits.push_non_fatal_error(ParseError::UnexpectedSpliceDescriptorLength {
+                declared_splice_descriptor_length_in_bits: self.descriptor_bits_length,
+                actual_splice_descriptor_length_in_bits: (self.bits_remaining_before_descriptor
+                    as usize)
+                    - bits_remaining,
+                splice_descriptor_tag,
+            })
+        }
+    }
+}
+
+pub fn try_splice_descriptors_from(
+    bits: &mut Bits,
+    descriptor_loop_length: u32,
+) -> Result<Vec<SpliceDescriptor>, ParseError> {
+    let mut splice_descriptors = vec![];
+    bits.validate(descriptor_loop_length * 8, "SpliceDescriptor; reading loop")?;
+    let bits_remaining_before_loop = bits.bits_remaining();
+    let expected_end = bits_remaining_before_loop - ((descriptor_loop_length as usize) * 8);
+    while bits.bits_remaining() > expected_end {
+        splice_descriptors.push(SpliceDescriptor::try_from(bits)?);
+    }
+    Ok(splice_descriptors)
+}
+
+impl SpliceDescriptor {
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        match SpliceDescriptorTag::try_from(bits.byte())? {
+            SpliceDescriptorTag::AvailDescriptor => {
+                Ok(Self::AvailDescriptor(AvailDescriptor::try_from(bits)?))
+            }
+            SpliceDescriptorTag::DTMFDescriptor => {
+                Ok(Self::DTMFDescriptor(DTMFDescriptor::try_from(bits)?))
+            }
+            SpliceDescriptorTag::SegmentationDescriptor => Ok(Self::SegmentationDescriptor(
+                SegmentationDescriptor::try_from(bits)?,
+            )),
+            SpliceDescriptorTag::TimeDescriptor => {
+                Ok(Self::TimeDescriptor(TimeDescriptor::try_from(bits)?))
+            }
+            SpliceDescriptorTag::AudioDescriptor => {
+                Ok(Self::AudioDescriptor(AudioDescriptor::try_from(bits)?))
+            }
         }
     }
 }

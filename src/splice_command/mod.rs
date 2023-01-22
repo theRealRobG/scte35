@@ -1,3 +1,5 @@
+use crate::{bit_reader::Bits, error::ParseError};
+
 use self::{
     private_command::PrivateCommand, splice_insert::SpliceInsert, splice_schedule::SpliceSchedule,
     time_signal::TimeSignal,
@@ -16,6 +18,22 @@ pub enum SpliceCommandType {
     TimeSignal,
     BandwidthReservation,
     PrivateCommand,
+}
+
+impl TryFrom<u8> for SpliceCommandType {
+    type Error = ParseError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x00 => Ok(SpliceCommandType::SpliceNull),
+            0x04 => Ok(SpliceCommandType::SpliceSchedule),
+            0x05 => Ok(SpliceCommandType::SpliceInsert),
+            0x06 => Ok(SpliceCommandType::TimeSignal),
+            0x07 => Ok(SpliceCommandType::BandwidthReservation),
+            0xff => Ok(SpliceCommandType::PrivateCommand),
+            _ => Err(ParseError::UnrecognisedSpliceCommandType(value)),
+        }
+    }
 }
 
 impl SpliceCommandType {
@@ -68,6 +86,24 @@ pub enum SpliceCommand {
 }
 
 impl SpliceCommand {
+    pub fn try_from(bits: &mut Bits, splice_command_length: u32) -> Result<Self, ParseError> {
+        let splice_command_type_raw_value = bits.byte();
+
+        match SpliceCommandType::try_from(splice_command_type_raw_value)? {
+            SpliceCommandType::SpliceNull => Ok(Self::SpliceNull),
+            SpliceCommandType::SpliceSchedule => {
+                Ok(Self::SpliceSchedule(SpliceSchedule::try_from(bits)?))
+            }
+            SpliceCommandType::SpliceInsert => {
+                Ok(Self::SpliceInsert(SpliceInsert::try_from(bits)?))
+            }
+            SpliceCommandType::TimeSignal => Ok(Self::TimeSignal(TimeSignal::try_from(bits)?)),
+            SpliceCommandType::BandwidthReservation => Ok(Self::BandwidthReservation),
+            SpliceCommandType::PrivateCommand => Ok(Self::PrivateCommand(
+                PrivateCommand::try_from(bits, splice_command_length)?,
+            )),
+        }
+    }
     pub fn command_type(&self) -> SpliceCommandType {
         match *self {
             SpliceCommand::SpliceNull => SpliceCommandType::SpliceNull,

@@ -1,4 +1,5 @@
 pub mod atsc;
+mod bit_reader;
 pub mod error;
 mod hex;
 pub mod splice_command;

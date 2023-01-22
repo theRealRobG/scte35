@@ -1,6 +1,4 @@
-use bitter::{BigEndianReader, BitReader};
-
-use crate::error::{validate, ParseError};
+use crate::{bit_reader::Bits, error::ParseError};
 
 /// The `BreakDuration` structure specifies the duration of the commercial break(s). It may
 /// be used to give the splicer an indication of when the break will be over and when the
@@ -29,13 +27,11 @@ pub struct BreakDuration {
 }
 
 impl BreakDuration {
-    pub fn new(bit_reader: &mut BigEndianReader) -> Result<BreakDuration, ParseError> {
-        validate(bit_reader, 40, "BreakDuration")?;
-        let auto_return = bit_reader.peek(1) != 0;
-        bit_reader.consume(1);
-        bit_reader.consume(6);
-        let duration = bit_reader.peek(33);
-        bit_reader.consume(33);
+    pub fn try_from(bits: &mut Bits) -> Result<BreakDuration, ParseError> {
+        bits.validate(40, "BreakDuration")?;
+        let auto_return = bits.bool();
+        bits.consume(6);
+        let duration = bits.u64(33);
         Ok(Self {
             auto_return,
             duration,
@@ -65,21 +61,19 @@ pub struct SpliceTime {
 }
 
 impl SpliceTime {
-    pub fn new(bit_reader: &mut BigEndianReader) -> Result<Self, ParseError> {
-        validate(bit_reader, 1, "SpliceTime; reading timeSpecifiedFlag")?;
-        let time_specified_flag = bit_reader.peek(1) != 0;
-        bit_reader.consume(1);
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        bits.validate(1, "SpliceTime; reading timeSpecifiedFlag")?;
+        let time_specified_flag = bits.bool();
         if time_specified_flag {
-            validate(bit_reader, 39, "SpliceTime; timeSpecifiedFlag == 1")?;
-            bit_reader.consume(6);
-            let pts_time = bit_reader.peek(33);
-            bit_reader.consume(33);
+            bits.validate(39, "SpliceTime; timeSpecifiedFlag == 1")?;
+            bits.consume(6);
+            let pts_time = bits.u64(33);
             Ok(Self {
                 pts_time: Some(pts_time),
             })
         } else {
-            validate(bit_reader, 7, "SpliceTime; timeSpecifiedFlag == 0")?;
-            bit_reader.consume(7);
+            bits.validate(7, "SpliceTime; timeSpecifiedFlag == 0")?;
+            bits.consume(7);
             Ok(Self { pts_time: None })
         }
     }

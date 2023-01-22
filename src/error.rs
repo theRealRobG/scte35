@@ -1,11 +1,12 @@
-use bitter::{BigEndianReader, BitReader};
-
 use crate::{
     hex::DecodeHexError,
     splice_command::SpliceCommandType,
     splice_descriptor::{segmentation_descriptor::SegmentationUPIDType, SpliceDescriptorTag},
 };
-use std::fmt::{Display, Formatter};
+use std::{
+    fmt::{Display, Formatter},
+    str::Utf8Error,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseError {
@@ -20,21 +21,21 @@ pub enum ParseError {
     DecodeHexError(DecodeHexError),
     InvalidSectionSyntaxIndicator,
     InvalidPrivateIndicator,
-    UnrecognisedSpliceCommandType(u32),
-    UnrecognisedSegmentationUPIDType(u32),
+    UnrecognisedSpliceCommandType(u8),
+    UnrecognisedSegmentationUPIDType(u8),
     UnexpectedSegmentationUPIDLength {
         /// This is the number of bytes that the UPID was expected to have as declared via
         /// `segmentation_upid_length`.
-        declared_segmentation_upid_length: u32,
+        declared_segmentation_upid_length: u8,
         /// This is the number of bytes that the UPID was expected to have as defined by the
         /// specification for the given UPID type.
-        expected_segmentation_upid_length: u32,
+        expected_segmentation_upid_length: u8,
         /// This is the type of the UPID that failed to parse properly.
         segmentation_upid_type: SegmentationUPIDType,
     },
-    InvalidUUIDInSegmentationUPID(String),
-    InvalidURLInSegmentationUPID(String),
-    UnrecognisedSegmentationTypeID(u32),
+    InvalidUUIDInSegmentationUPID(&'static str),
+    InvalidURLInSegmentationUPID(&'static str),
+    UnrecognisedSegmentationTypeID(u8),
     InvalidSegmentationDescriptorIdentifier(u32),
     InvalidATSCContentIdentifierInUPID {
         upid_length: u8,
@@ -43,11 +44,11 @@ pub enum ParseError {
         upid_length: u8,
     },
     InvalidBitStreamMode {
-        bsmod: u32,
-        acmod: Option<u32>,
+        bsmod: u8,
+        acmod: Option<u8>,
     },
-    UnrecognisedAudioCodingMode(u32),
-    UnrecognisedSpliceDescriptorTag(u32),
+    UnrecognisedAudioCodingMode(u8),
+    UnrecognisedSpliceDescriptorTag(u8),
     EncryptedMessageNotSupported,
     UnexpectedSpliceCommandLength {
         /// This is the number of bits that the SpliceCommand was expected to have as declared via
@@ -73,9 +74,13 @@ pub enum ParseError {
         declared_splice_descriptor_length_in_bits: u32,
         /// This is the number of bits that the `SpliceDescriptor` actually had after parsing had
         /// completed.
-        actual_splice_descriptor_length_in_bits: u32,
+        actual_splice_descriptor_length_in_bits: usize,
         /// The tag for the splice descriptor.
         splice_descriptor_tag: SpliceDescriptorTag,
+    },
+    Utf8ConversionError {
+        error: Utf8Error,
+        description: &'static str,
     },
 }
 
@@ -156,7 +161,7 @@ impl Display for ParseError {
                     f,
                     "Value {} was obtained for bit stream mode, and {} was obtained for audio coding mode, but this combination is not a valid BitStreamMode.",
                     bsmod,
-                    acmod.map(|s| format!("{}", s)).unwrap_or(String::from("None"))
+                    acmod.map(|s| format!("{}", s)).unwrap_or_else(|| String::from("None"))
                 )
             }
             ParseError::UnrecognisedAudioCodingMode(t) => {
@@ -205,28 +210,14 @@ impl Display for ParseError {
                     actual_splice_descriptor_length_in_bits
                 )
             }
+            ParseError::Utf8ConversionError { error, description } => {
+                write!(f, "Utf8Error: {} - {}", error, description)
+            }
         }
     }
 }
 
 impl std::error::Error for ParseError {}
-
-pub fn validate(
-    bit_reader: &mut BigEndianReader,
-    expected_minimum_bits_left: u32,
-    description: &'static str,
-) -> Result<(), ParseError> {
-    let actual_bits_left = bit_reader.refill_lookahead();
-    if actual_bits_left < expected_minimum_bits_left {
-        Err(ParseError::UnexpectedEndOfData {
-            expected_minimum_bits_left,
-            actual_bits_left,
-            description,
-        })
-    } else {
-        Ok(())
-    }
-}
 
 const STATIC_BYTES_LENGTH: isize = 4;
 

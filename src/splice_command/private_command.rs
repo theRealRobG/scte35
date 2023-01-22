@@ -1,3 +1,5 @@
+use crate::{bit_reader::Bits, error::ParseError};
+
 /// The `PrivateCommand` structure provides a means to distribute user-defined commands using the
 /// SCTE 35 protocol. The first bit field in each user-defined command is a 32-bit identifier,
 /// unique for each participating vendor. Receiving equipment should skip any `SpliceInfoSection`
@@ -26,4 +28,25 @@ pub struct PrivateCommand {
     /// The remainder of the descriptor is dedicated to data fields as required by the descriptor
     /// being defined.
     pub private_bytes: Vec<u8>,
+}
+
+impl PrivateCommand {
+    pub fn try_from(bits: &mut Bits, splice_command_length: u32) -> Result<Self, ParseError> {
+        bits.validate(
+            splice_command_length * 8,
+            "PrivateCommand; validating splice_command_length",
+        )?;
+
+        let identifier = bits.string(4, "Reading identifier for PrivateCommand")?;
+        let mut bytes_left = splice_command_length - 4;
+        let mut private_bytes = vec![];
+        while bytes_left > 0 {
+            bytes_left -= 1;
+            private_bytes.push(bits.byte());
+        }
+        Ok(Self {
+            identifier,
+            private_bytes,
+        })
+    }
 }

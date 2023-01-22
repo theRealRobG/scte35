@@ -1,4 +1,4 @@
-use crate::time::BreakDuration;
+use crate::{bit_reader::Bits, error::ParseError, time::BreakDuration};
 
 /// The `SpliceSchedule` command is provided to allow a schedule of splice events to be conveyed
 /// in advance.
@@ -121,4 +121,76 @@ pub struct ComponentMode {
     /// to UTC without the use of the GPS_UTC_offset value provided by the System Time table. The
     /// `utc_splice_time` field is used only in the `SpliceSchedule` command.
     pub utc_splice_time: u32,
+}
+
+impl SpliceSchedule {
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let splice_count = bits.byte();
+        let mut events = vec![];
+        for _ in 0..splice_count {
+            events.push(Event::try_from(bits)?);
+        }
+        Ok(Self { events })
+    }
+}
+
+impl Event {
+    fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let event_id = bits.u32(32);
+        let is_cancelled = bits.bool();
+        bits.consume(7);
+        if is_cancelled {
+            Ok(Self {
+                event_id,
+                scheduled_event: None,
+            })
+        } else {
+            Ok(Self {
+                event_id,
+                scheduled_event: Some(ScheduledEvent::try_from(bits)?),
+            })
+        }
+    }
+}
+
+impl ScheduledEvent {
+    fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let out_of_network_indicator = bits.bool();
+        let program_splice_flag = bits.bool();
+        let duration_flag = bits.bool();
+        bits.consume(5);
+        let splice_mode = if program_splice_flag {
+            SpliceMode::ProgramSpliceMode(ProgramMode {
+                utc_splice_time: bits.u32(32),
+            })
+        } else {
+            let component_count = bits.byte();
+            let mut components = vec![];
+            for _ in 0..component_count {
+                let component_tag = bits.byte();
+                let utc_splice_time = bits.u32(32);
+                components.push(ComponentMode {
+                    component_tag,
+                    utc_splice_time,
+                });
+            }
+            SpliceMode::ComponentSpliceMode(components)
+        };
+        let break_duration = if duration_flag {
+            Some(BreakDuration::try_from(bits)?)
+        } else {
+            None
+        };
+        let unique_program_id = bits.u16(16);
+        let avail_num = bits.byte();
+        let avails_expected = bits.byte();
+        Ok(Self {
+            out_of_network_indicator,
+            splice_mode,
+            break_duration,
+            unique_program_id,
+            avail_num,
+            avails_expected,
+        })
+    }
 }

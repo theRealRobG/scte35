@@ -1,4 +1,7 @@
-use std::{fmt, num::ParseIntError};
+use std::{
+    fmt::{self, Write},
+    num::ParseIntError,
+};
 
 // Solution is based on following SO answer: https://stackoverflow.com/a/52992629/7039100
 
@@ -11,6 +14,14 @@ pub fn decode_hex(s: &str) -> Result<Vec<u8>, DecodeHexError> {
             .map(|i| u8::from_str_radix(&s[i..i + 2], 16).map_err(|e| e.into()))
             .collect()
     }
+}
+
+pub fn encode_hex(bytes: &[u8]) -> String {
+    let mut s = String::with_capacity(bytes.len() * 2);
+    for &b in bytes {
+        write!(&mut s, "{:02x}", b).unwrap();
+    }
+    s
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

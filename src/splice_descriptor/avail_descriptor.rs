@@ -1,3 +1,6 @@
+use super::DescriptorLengthExpectation;
+use crate::{bit_reader::Bits, error::ParseError};
+
 /// The `AvailDescriptor` is an implementation of a `SpliceDescriptor`. It provides an optional
 /// extension to the `SpliceInsert` command that allows an authorization identifier to be sent for
 /// an avail. Multiple copies of this descriptor may be included by using the loop mechanism
@@ -24,4 +27,20 @@ pub struct AvailDescriptor {
     /// tones. An example would be a network directing an affiliate or a head-end to black out a
     /// sporting event.
     pub provider_avail_id: u32,
+}
+
+impl AvailDescriptor {
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let expectation = DescriptorLengthExpectation::try_from(bits, "AvailDescriptor")?;
+
+        let identifier = bits.u32(32);
+        let provider_avail_id = bits.u32(32);
+
+        expectation.validate_non_fatal(bits, super::SpliceDescriptorTag::AvailDescriptor);
+
+        Ok(Self {
+            identifier,
+            provider_avail_id,
+        })
+    }
 }

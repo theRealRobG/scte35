@@ -1,5 +1,11 @@
+use bitter::BigEndianReader;
+
 use crate::{
-    error::ParseError, hex, splice_command::SpliceCommand, splice_descriptor::SpliceDescriptor,
+    bit_reader::Bits,
+    error::ParseError,
+    hex,
+    splice_command::SpliceCommand,
+    splice_descriptor::{try_splice_descriptors_from, SpliceDescriptor},
 };
 
 /// The `SpliceInfoSection` shall be carried in transport packets whereby only one section or
@@ -107,13 +113,70 @@ pub struct SpliceInfoSection {
 
 impl SpliceInfoSection {
     /// Creates a `SpliceInfoSection` using the provided hex encoded string.
-    pub fn from_hex_string(hex_string: &str) -> Result<SpliceInfoSection, ParseError> {
-        let data = hex::decode_hex(hex_string)?;
-        Self::from(data)
+    pub fn try_from_hex_string(hex_string: &str) -> Result<SpliceInfoSection, ParseError> {
+        let data = if hex_string.starts_with("0x") || hex_string.starts_with("0X") {
+            hex::decode_hex(&hex_string[2..])?
+        } else {
+            hex::decode_hex(hex_string)?
+        };
+        Self::try_from_bytes(data)
     }
 
-    pub fn from(data: Vec<u8>) -> Result<SpliceInfoSection, ParseError> {
-        todo!()
+    pub fn try_from_bytes(data: Vec<u8>) -> Result<SpliceInfoSection, ParseError> {
+        let mut bit_reader = BigEndianReader::new(&data);
+        let mut bits = Bits::new(&mut bit_reader);
+        bits.validate(
+            24,
+            "SpliceInfoSection; need at least 24 bits to get to end of section_length field",
+        )?;
+        let table_id = bits.byte();
+        if bits.bool() {
+            return Err(ParseError::InvalidSectionSyntaxIndicator);
+        }
+        if bits.bool() {
+            return Err(ParseError::InvalidPrivateIndicator);
+        }
+        let sap_type = SAPType::try_from(bits.u8(2)).unwrap_or(SAPType::Unspecified);
+        let section_length_in_bytes = bits.u32(12);
+        bits.validate(
+            section_length_in_bytes * 8,
+            "SpliceInfoSection; not enough bytes left to read section_length",
+        )?;
+        let protocol_version = bits.byte();
+        let is_encrypted = bits.bool();
+        if is_encrypted {
+            return Err(ParseError::EncryptedMessageNotSupported);
+        }
+        let _ /* encryptionAlgorithm */ = EncryptionAlgorithm::try_from(bits.u8(6)).ok();
+        let pts_adjustment = bits.u64(33);
+        let _ /* cwIndex */ = bits.byte();
+        let tier = bits.u16(12);
+        let splice_command_length = bits.u32(12);
+        let splice_command = SpliceCommand::try_from(&mut bits, splice_command_length)?;
+        let descriptor_loop_length = bits.u32(16);
+        let splice_descriptors = try_splice_descriptors_from(&mut bits, descriptor_loop_length)?;
+        let encrypted_packet: Option<EncryptedPacket> = if is_encrypted {
+            return Err(ParseError::EncryptedMessageNotSupported);
+        } else {
+            while bits.bits_remaining() >= 40 {
+                _ = bits.byte();
+            }
+            None
+        };
+        let crc_32 = bits.u32(32);
+        let non_fatal_errors = bits.get_non_fatal_errors().clone();
+        Ok(Self {
+            table_id,
+            sap_type,
+            protocol_version,
+            encrypted_packet,
+            pts_adjustment,
+            tier,
+            splice_command,
+            splice_descriptors,
+            crc_32,
+            non_fatal_errors,
+        })
     }
 }
 
@@ -130,6 +193,20 @@ pub enum SAPType {
     Type3,
     /// The type of SAP, if any, is not signaled
     Unspecified,
+}
+
+impl TryFrom<u8> for SAPType {
+    type Error = &'static str;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x0 => Ok(SAPType::Type1),
+            0x1 => Ok(SAPType::Type2),
+            0x2 => Ok(SAPType::Type3),
+            0x3 => Ok(SAPType::Unspecified),
+            _ => Err("Unexpected u8 for SAPType"),
+        }
+    }
 }
 
 impl SAPType {
@@ -191,16 +268,18 @@ pub enum EncryptionAlgorithm {
     UserPrivate(u8),
 }
 
-impl EncryptionAlgorithm {
-    fn from(value: u8) -> Option<Self> {
+impl TryFrom<u8> for EncryptionAlgorithm {
+    type Error = &'static str;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            0 => Some(Self::NoEncryption),
-            1 => Some(Self::DesEcbMode),
-            2 => Some(Self::DesCbcMode),
-            3 => Some(Self::TripleDes),
-            4..=31 => None,
-            32..=63 => Some(Self::UserPrivate(value)),
-            _ => None,
+            0 => Ok(Self::NoEncryption),
+            1 => Ok(Self::DesEcbMode),
+            2 => Ok(Self::DesCbcMode),
+            3 => Ok(Self::TripleDes),
+            4..=31 => Err("Unexpected u8 value for EncryptionAlgorithm"),
+            32..=63 => Ok(Self::UserPrivate(value)),
+            _ => Err("Unexpected u8 value for EncryptionAlgorithm"),
         }
     }
 }

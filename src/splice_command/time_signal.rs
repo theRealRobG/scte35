@@ -1,4 +1,4 @@
-use crate::time::SpliceTime;
+use crate::{bit_reader::Bits, error::ParseError, time::SpliceTime};
 
 /// The `TimeSignal` provides a time synchronized data delivery mechanism. The syntax of the
 /// `TimeSignal` allows for the synchronization of the information carried in this message with the
@@ -26,5 +26,13 @@ pub struct TimeSignal {
 impl TimeSignal {
     pub fn is_immediate(&self) -> bool {
         self.splice_time.pts_time == None
+    }
+}
+
+impl TimeSignal {
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        Ok(Self {
+            splice_time: SpliceTime::try_from(bits)?,
+        })
     }
 }

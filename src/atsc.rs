@@ -1,6 +1,4 @@
-use bitter::{BigEndianReader, BitReader};
-
-use crate::error::ParseError;
+use crate::{bit_reader::Bits, error::ParseError};
 
 /// The ATSC Content Identifier is a structure that is composed of a TSID and a “house number” with
 /// a period of uniqueness. A “house number” is any number that the holder of the TSID wishes as
@@ -50,34 +48,27 @@ pub struct ATSCContentIdentifier {
 }
 
 impl ATSCContentIdentifier {
-    pub fn new(
-        bit_reader: &mut BigEndianReader,
-        upid_length: u8,
-    ) -> Result<ATSCContentIdentifier, ParseError> {
+    pub fn try_from(bits: &mut Bits, upid_length: u8) -> Result<ATSCContentIdentifier, ParseError> {
         let content_id_length = (upid_length as isize) - 4;
         if content_id_length < 0 {
             return Err(ParseError::InvalidATSCContentIdentifierInUPID { upid_length });
         }
 
-        let tsid = bit_reader.peek(16) as u16;
-        bit_reader.consume(16);
-        bit_reader.consume(2);
-        let end_of_day = bit_reader.peek(5) as u8;
-        bit_reader.consume(5);
-        let unique_for = bit_reader.peek(9) as u16;
-        bit_reader.consume(9);
-        let mut buf = vec![0, content_id_length as u8];
-        bit_reader.read_bytes(&mut buf);
+        let tsid = bits.u16(16);
+        bits.consume(2);
+        let end_of_day = bits.u8(5);
+        let unique_for = bits.u16(9);
+        let content_id = bits.string(
+            content_id_length as usize,
+            "Reading content_id for ATSCContentIdentifier",
+        )?;
 
-        match std::str::from_utf8(&buf) {
-            Ok(id) => Ok(Self {
-                tsid,
-                end_of_day,
-                unique_for,
-                content_id: id.to_string(),
-            }),
-            Err(_) => Err(ParseError::InvalidATSCContentIdentifierInUPID { upid_length }),
-        }
+        Ok(Self {
+            tsid,
+            end_of_day,
+            unique_for,
+            content_id,
+        })
     }
 }
 
@@ -168,6 +159,24 @@ pub enum AudioCodingMode {
     ThreeTwo,
 }
 
+impl TryFrom<u8> for AudioCodingMode {
+    type Error = ParseError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(AudioCodingMode::OneAndOne),
+            1 => Ok(AudioCodingMode::OneZero),
+            2 => Ok(AudioCodingMode::TwoZero),
+            3 => Ok(AudioCodingMode::ThreeZero),
+            4 => Ok(AudioCodingMode::TwoOne),
+            5 => Ok(AudioCodingMode::ThreeOne),
+            6 => Ok(AudioCodingMode::TwoTwo),
+            7 => Ok(AudioCodingMode::ThreeTwo),
+            _ => Err(ParseError::UnrecognisedAudioCodingMode(value)),
+        }
+    }
+}
+
 impl AudioCodingMode {
     pub fn value(&self) -> u8 {
         match *self {
@@ -214,26 +223,21 @@ pub enum BitStreamMode {
 }
 
 impl BitStreamMode {
-    pub fn new(bsmod: u8, acmod: Option<u8>) -> Option<Self> {
+    pub fn try_from(bsmod: u8, acmod: Option<u8>) -> Result<Self, ParseError> {
         match bsmod {
-            0 => Some(Self::CompleteMain),
-            1 => Some(Self::MusicAndEffects),
-            2 => Some(Self::VisuallyImpaired),
-            3 => Some(Self::HearingImpaired),
-            4 => Some(Self::Dialogue),
-            5 => Some(Self::Commentary),
-            6 => Some(Self::Emergeny),
-            7 => {
-                let acmod = acmod?;
-                if acmod == 1 {
-                    Some(Self::VoiceOver)
-                } else if acmod > 1 && acmod < 8 {
-                    Some(Self::Karaoke)
-                } else {
-                    None
-                }
-            }
-            _ => None,
+            0 => Ok(Self::CompleteMain),
+            1 => Ok(Self::MusicAndEffects),
+            2 => Ok(Self::VisuallyImpaired),
+            3 => Ok(Self::HearingImpaired),
+            4 => Ok(Self::Dialogue),
+            5 => Ok(Self::Commentary),
+            6 => Ok(Self::Emergeny),
+            7 => match acmod {
+                Some(1) => Ok(Self::VoiceOver),
+                Some(2..=7) => Ok(Self::Karaoke),
+                _ => Err(ParseError::InvalidBitStreamMode { bsmod, acmod }),
+            },
+            _ => Err(ParseError::InvalidBitStreamMode { bsmod, acmod }),
         }
     }
 }

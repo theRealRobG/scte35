@@ -1,3 +1,7 @@
+use crate::{bit_reader::Bits, error::ParseError};
+
+use super::DescriptorLengthExpectation;
+
 /// The `TimeDescriptor` is an implementation of a `SpliceDescriptor`. It provides an optional
 /// extension to the `SpliceInsert`, `SpliceNull` and `TimeSignal` commands that allows a
 /// programmer’s wall clock time to be sent to a client. For the highest accuracy, this descriptor
@@ -53,4 +57,25 @@ pub struct TimeDescriptor {
     /// // NTP seconds = TAI seconds - UTC_offset + 2,208,988,800
     /// ```
     pub utc_offset: u16,
+}
+
+impl TimeDescriptor {
+    // NOTE: It is assumed that the splice_descriptor_tag has already been read.
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let expectation = DescriptorLengthExpectation::try_from(bits, "TimeDescriptor")?;
+
+        let identifier = bits.u32(32);
+        let tai_seconds = bits.u64(48);
+        let tai_ns = bits.u32(32);
+        let utc_offset = bits.u16(16);
+
+        expectation.validate_non_fatal(bits, super::SpliceDescriptorTag::TimeDescriptor);
+
+        Ok(Self {
+            identifier,
+            tai_seconds,
+            tai_ns,
+            utc_offset,
+        })
+    }
 }

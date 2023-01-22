@@ -1,4 +1,5 @@
 use base64::prelude::*;
+use pretty_assertions::assert_eq;
 use scte35::{
     splice_command::{
         splice_insert::{self, SpliceInsert},
@@ -63,7 +64,7 @@ fn test_time_signal_placement_opportunity_start() {
     };
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from(
+        &SpliceInfoSection::try_from_bytes(
             BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
@@ -73,7 +74,7 @@ fn test_time_signal_placement_opportunity_start() {
     );
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from_hex_string(hex_string)
+        &SpliceInfoSection::try_from_hex_string(hex_string)
             .expect("should be valid splice info section from hex"),
         "unexpected splice info section from hex"
     );
@@ -121,7 +122,7 @@ fn test_splice_insert() {
     };
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from(
+        &SpliceInfoSection::try_from_bytes(
             BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
@@ -131,7 +132,7 @@ fn test_splice_insert() {
     );
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from_hex_string(hex_string)
+        &SpliceInfoSection::try_from_hex_string(hex_string)
             .expect("should be valid splice info section from hex"),
         "unexpected splice info section from hex"
     );
@@ -180,7 +181,7 @@ fn test_time_signal_placement_opportunity_end() {
     };
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from(
+        &SpliceInfoSection::try_from_bytes(
             BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
@@ -190,7 +191,7 @@ fn test_time_signal_placement_opportunity_end() {
     );
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from_hex_string(hex_string)
+        &SpliceInfoSection::try_from_hex_string(hex_string)
             .expect("should be valid splice info section from hex"),
         "unexpected splice info section from hex"
     );
@@ -258,7 +259,7 @@ fn test_time_signal_program_start_end() {
     };
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from(
+        &SpliceInfoSection::try_from_bytes(
             BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
@@ -268,7 +269,7 @@ fn test_time_signal_program_start_end() {
     );
     assert_eq!(
         &expected_splice_info_section,
-        &SpliceInfoSection::from_hex_string(hex_string)
+        &SpliceInfoSection::try_from_hex_string(hex_string)
             .expect("should be valid splice info section from hex"),
         "unexpected splice info section from hex"
     );
@@ -315,7 +316,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -325,7 +326,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -393,7 +394,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -403,7 +404,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -450,7 +451,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -460,7 +461,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -549,7 +550,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -559,7 +560,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -601,7 +602,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -611,7 +612,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -651,7 +652,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -661,7 +662,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -701,7 +702,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -711,7 +712,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -751,7 +752,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -761,7 +762,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -801,7 +802,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -811,7 +812,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -851,7 +852,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -861,7 +862,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -901,7 +902,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -911,7 +912,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -951,7 +952,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -961,7 +962,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1001,7 +1002,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1011,7 +1012,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1074,7 +1075,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1084,7 +1085,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1131,7 +1132,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1141,7 +1142,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1218,7 +1219,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1228,7 +1229,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1273,7 +1274,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1283,7 +1284,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1323,7 +1324,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1333,7 +1334,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1373,7 +1374,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1383,7 +1384,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1423,7 +1424,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1433,7 +1434,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1473,7 +1474,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1483,7 +1484,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1582,7 +1583,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1592,7 +1593,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1700,7 +1701,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1710,7 +1711,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1748,7 +1749,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1758,7 +1759,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1805,7 +1806,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1815,7 +1816,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );
@@ -1893,7 +1894,7 @@ fn test_time_signal_program_start_end() {
 //     )
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from(
+//         &SpliceInfoSection::try_from_bytes(
 //             BASE64_STANDARD
 //                 .decode(base64_string)
 //                 .expect("should be valid base64")
@@ -1903,7 +1904,7 @@ fn test_time_signal_program_start_end() {
 //     );
 //     assert_eq!(
 //         &expected_splice_info_section,
-//         &SpliceInfoSection::from_hex_string(hex_string)
+//         &SpliceInfoSection::try_from_hex_string(hex_string)
 //             .expect("should be valid splice info section from hex"),
 //         "unexpected splice info section from hex"
 //     );

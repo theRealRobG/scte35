@@ -1,4 +1,9 @@
-use crate::atsc::{AudioCodingMode, BitStreamMode};
+use super::DescriptorLengthExpectation;
+use crate::{
+    atsc::{AudioCodingMode, BitStreamMode},
+    bit_reader::Bits,
+    error::ParseError,
+};
 
 /// The `AudioDescriptor` should be used when programmers and/or MVPDs do not support dynamic
 /// signaling (e.g., signaling of audio language changes) and with legacy audio formats that do not
@@ -100,6 +105,62 @@ impl MaxNumberOfEncodedChannels {
             4 => Self::Five,
             5 => Self::Six,
             x => Self::Unknown(x),
+        }
+    }
+}
+
+impl AudioDescriptor {
+    pub fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let expectation = DescriptorLengthExpectation::try_from(bits, "AudioDescriptor")?;
+
+        let identifier = bits.u32(32);
+        let audio_count = bits.u8(4);
+        bits.consume(4);
+        let mut components = vec![];
+        for _ in 0..audio_count {
+            components.push(Component::try_from(bits)?);
+        }
+
+        expectation.validate_non_fatal(bits, super::SpliceDescriptorTag::AudioDescriptor);
+
+        Ok(Self {
+            identifier,
+            components,
+        })
+    }
+}
+
+impl Component {
+    fn try_from(bits: &mut Bits) -> Result<Self, ParseError> {
+        let component_tag = bits.byte();
+        let iso_code = bits.u32(24);
+        let bsmod = bits.u8(3);
+        if bits.bool() {
+            let acmod = bits.u8(3);
+            let audio_coding_mode = AudioCodingMode::try_from(acmod)?;
+            let bit_stream_mode = BitStreamMode::try_from(bsmod, Some(acmod))?;
+            let num_channels = NumChannels::AudioCodingMode(audio_coding_mode);
+            let full_srvc_audio = bits.bool();
+            Ok(Self {
+                component_tag,
+                iso_code,
+                bit_stream_mode,
+                num_channels,
+                full_srvc_audio,
+            })
+        } else {
+            let max_number_of_encoded_channels = MaxNumberOfEncodedChannels::new(bits.u8(3));
+            let bit_stream_mode = BitStreamMode::try_from(bsmod, None)?;
+            let num_channels =
+                NumChannels::MaxNumberOfEncodedChannels(max_number_of_encoded_channels);
+            let full_srvc_audio = bits.bool();
+            Ok(Self {
+                component_tag,
+                iso_code,
+                bit_stream_mode,
+                num_channels,
+                full_srvc_audio,
+            })
         }
     }
 }
