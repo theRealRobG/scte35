@@ -661,55 +661,52 @@ fn test_time_signal_segmentation_descriptor_umid() {
     );
 }
 
-// #[test]
-// fn test_timeSignal_segmentationDescriptor_ISAN_programStart() {
-//     let base64_string = "/DA4AAAAAAAA///wBQb+AAAAAAAiAiBDVUVJAAAABn//AAApPWwGDAAAAAA6jQAAAAAAABAAAPaArb4=";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::TimeSignal(TimeSignal { splice_time: SpliceTime { pts_time: Some(0) } }),
-//         splice_descriptors: vec![
-//             SpliceDescriptor::SegmentationDescriptor(
-//                 SegmentationDescriptor(
-//                     identifier: 1129661769,
-//                     event_id: 6,
-//                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         delivery_restrictions: None,
-//                         component_segments: None,
-//                         segmentation_duration: 2702700,
-//                         segmentation_upid: .isan("0000-0000-3A8D-0000-Z-0000-0000-6"),
-//                         segmentation_type_id: SegmentationTypeID::ProgramStart,
-//                         segment_num: 0,
-//                         segments_expected: 0,
-//                         sub_segment: None
-//                     )
-//                 )
-//             )
-//         ],
-//         crc_32: 0xF680ADBE,
-//         non_fatal_errors: vec![],
-//     )
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_bytes(
-//             BASE64_STANDARD
-//                 .decode(base64_string)
-//                 .expect("should be valid base64")
-//         )
-//         .expect("should be valid splice info section from base64"),
-//         "unexpected splice info section from base64"
-//     );
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_hex_string(hex_string)
-//             .expect("should be valid splice info section from hex"),
-//         "unexpected splice info section from hex"
-//     );
-// }
+#[test]
+fn test_time_signal_segmentation_descriptor_isan_program_start() {
+    let base64_string =
+        "/DA4AAAAAAAA///wBQb+AAAAAAAiAiBDVUVJAAAABn//AAApPWwGDAAAAAA6jQAAAAAAABAAAPaArb4=";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::TimeSignal(TimeSignal {
+            splice_time: SpliceTime { pts_time: Some(0) },
+        }),
+        splice_descriptors: vec![SpliceDescriptor::SegmentationDescriptor(
+            SegmentationDescriptor {
+                identifier: 1129661769,
+                event_id: 6,
+                scheduled_event: Some(segmentation_descriptor::ScheduledEvent {
+                    delivery_restrictions: None,
+                    component_segments: None,
+                    segmentation_duration: Some(2702700),
+                    segmentation_upid: SegmentationUPID::ISAN(String::from(
+                        "0000-0000-3A8D-0000-Z-0000-0000-6",
+                    )),
+                    segmentation_type_id: SegmentationTypeID::ProgramStart,
+                    segment_num: 0,
+                    segments_expected: 0,
+                    sub_segment: None,
+                }),
+            },
+        )],
+        crc_32: 0xF680ADBE,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_bytes(
+            BASE64_STANDARD
+                .decode(base64_string)
+                .expect("should be valid base64")
+        )
+        .expect("should be valid splice info section from base64"),
+        "unexpected splice info section from base64"
+    );
+}
 
 // #[test]
 // fn test_timeSignal_segmentationDescriptor_ISAN_programEnd() {

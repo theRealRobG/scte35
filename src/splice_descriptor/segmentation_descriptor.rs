@@ -772,7 +772,7 @@ impl SegmentationUPID {
                 let check = HyphenSeparatedCheckedHex {
                     version: HyphenSeparatedCheckedHexVersion::VersionedISAN,
                 };
-                Ok(Self::DeprecatedISAN(check.read(bits)))
+                Ok(Self::ISAN(check.read(bits)))
             }
             SegmentationUPIDType::TID => {
                 validate(upid_length, 12, upid_type)?;
@@ -888,9 +888,11 @@ impl HyphenSeparatedCheckedHex {
         let mut sections = vec![];
         for i in 0..=index_max {
             if check_indices.contains(&i) {
-                sections.push(check_char(&sections));
+                sections.push(check_char(&sections).to_string());
             } else {
-                sections.push(format!("{:0>4}", bits.u16(16)));
+                let mut s = String::with_capacity(4);
+                write!(&mut s, "{:04x}", bits.u16(16)).unwrap();
+                sections.push(s.to_uppercase());
             }
         }
         sections.join("-")
@@ -904,7 +906,7 @@ const CHAR_ARRAY: [char; 36] = [
 
 // The check calculation is taken from isan_check_digit_calculation_v2.0.pdf included
 // in the repository.
-fn check_char(isan: &[String]) -> String {
+fn check_char(isan: &[String]) -> char {
     let isan: Vec<String> = isan
         .iter()
         .filter(|s| s.chars().count() > 1)
@@ -924,11 +926,11 @@ fn check_char(isan: &[String]) -> String {
         product
     });
     if adjusted_product == 1 {
-        String::from("0")
+        '0'
     } else {
         CHAR_ARRAY
             .get((37 - adjusted_product) as usize)
             .unwrap()
-            .to_string()
+            .clone()
     }
 }
