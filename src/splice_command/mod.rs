@@ -88,22 +88,37 @@ pub enum SpliceCommand {
 impl SpliceCommand {
     pub fn try_from(bits: &mut Bits, splice_command_length: u32) -> Result<Self, ParseError> {
         let splice_command_type_raw_value = bits.byte();
+        let bits_left_before_splice_command = bits.bits_remaining() as isize;
+        let expected_bits_left_at_end_of_splice_command =
+            bits_left_before_splice_command - ((splice_command_length as isize) * 8);
 
-        match SpliceCommandType::try_from(splice_command_type_raw_value)? {
-            SpliceCommandType::SpliceNull => Ok(Self::SpliceNull),
+        let command = match SpliceCommandType::try_from(splice_command_type_raw_value)? {
+            SpliceCommandType::SpliceNull => Self::SpliceNull,
             SpliceCommandType::SpliceSchedule => {
-                Ok(Self::SpliceSchedule(SpliceSchedule::try_from(bits)?))
+                Self::SpliceSchedule(SpliceSchedule::try_from(bits)?)
             }
-            SpliceCommandType::SpliceInsert => {
-                Ok(Self::SpliceInsert(SpliceInsert::try_from(bits)?))
+            SpliceCommandType::SpliceInsert => Self::SpliceInsert(SpliceInsert::try_from(bits)?),
+            SpliceCommandType::TimeSignal => Self::TimeSignal(TimeSignal::try_from(bits)?),
+            SpliceCommandType::BandwidthReservation => Self::BandwidthReservation,
+            SpliceCommandType::PrivateCommand => {
+                Self::PrivateCommand(PrivateCommand::try_from(bits, splice_command_length)?)
             }
-            SpliceCommandType::TimeSignal => Ok(Self::TimeSignal(TimeSignal::try_from(bits)?)),
-            SpliceCommandType::BandwidthReservation => Ok(Self::BandwidthReservation),
-            SpliceCommandType::PrivateCommand => Ok(Self::PrivateCommand(
-                PrivateCommand::try_from(bits, splice_command_length)?,
-            )),
+        };
+
+        let bits_remaining = bits.bits_remaining() as isize;
+        if bits_remaining != expected_bits_left_at_end_of_splice_command {
+            bits.push_non_fatal_error(ParseError::UnexpectedSpliceCommandLength {
+                declared_splice_command_length_in_bits: splice_command_length * 8,
+                actual_splice_command_length_in_bits: (bits_left_before_splice_command
+                    - bits_remaining)
+                    as usize,
+                splice_command_type: command.command_type(),
+            })
         }
+
+        Ok(command)
     }
+
     pub fn command_type(&self) -> SpliceCommandType {
         match *self {
             SpliceCommand::SpliceNull => SpliceCommandType::SpliceNull,

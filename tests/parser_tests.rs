@@ -6,7 +6,7 @@ use scte35::{
     splice_command::{
         splice_insert::{self, SpliceInsert},
         time_signal::TimeSignal,
-        SpliceCommand,
+        SpliceCommand, SpliceCommandType,
     },
     splice_descriptor::{
         avail_descriptor::AvailDescriptor,
@@ -1428,114 +1428,105 @@ fn test_time_signal_segmentation_descriptor_uri_program_end() {
     );
 }
 
-// #[test]
-// fn test_spliceInsert_availDescriptor_hex() {
-//     let hex_string = "0xFC302F000000000000FFFFF014054800008F7FEFFE7369C02EFE0052CCF500000000000A0008435545490000013562DBA30A";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::SpliceInsert(
-//             SpliceInsert {
-//                 event_id: 1207959695,
-//                 scheduled_event: SpliceInsert.ScheduledEvent(
-//                     out_of_network_indicator: true,
-//                     is_immediate_splice: false,
-//                     splice_mode: .programSpliceMode(
-//                         SpliceInsert.ScheduledEvent.SpliceMode.ProgramMode(splice_time: SpliceTime(pts_time: 1936310318))
-//                     ),
-//                     break_duration: BreakDuration(
-//                         auto_return: true,
-//                         duration: 5426421
-//                     ),
-//                     unique_program_id: 0,
-//                     avail_num: 0,
-//                     avails_expected: 0
-//                 )
-//             )
-//         ),
-//         splice_descriptors: vec![
-//             .availDescriptor(
-//                 AvailDescriptor(
-//                     identifier: 1129661769,
-//                     providerAvailId: 309
-//                 )
-//             )
-//         ],
-//         crc_32: 0x62DBA30A,
-//         non_fatal_errors: vec![],
-//     )
-// }
+#[test]
+fn test_splice_insert_avail_descriptor_hex() {
+    let hex_string = "0xFC302F000000000000FFFFF014054800008F7FEFFE7369C02EFE0052CCF500000000000A0008435545490000013562DBA30A";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::SpliceInsert(SpliceInsert {
+            event_id: 1207959695,
+            scheduled_event: Some(splice_insert::ScheduledEvent {
+                out_of_network_indicator: true,
+                is_immediate_splice: false,
+                splice_mode: splice_insert::SpliceMode::ProgramSpliceMode(
+                    splice_insert::ProgramMode {
+                        splice_time: Some(SpliceTime {
+                            pts_time: Some(1936310318),
+                        }),
+                    },
+                ),
+                break_duration: Some(BreakDuration {
+                    auto_return: true,
+                    duration: 5426421,
+                }),
+                unique_program_id: 0,
+                avail_num: 0,
+                avails_expected: 0,
+            }),
+        }),
+        splice_descriptors: vec![SpliceDescriptor::AvailDescriptor(AvailDescriptor {
+            identifier: 1129661769,
+            provider_avail_id: 309,
+        })],
+        crc_32: 0x62DBA30A,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_hex_string(hex_string)
+            .expect("should be valid splice info section from hex"),
+        "unexpected splice info section from hex"
+    );
+}
 
-// #[test]
-// fn test_spliceInsert_availDescriptor_base64() {
-//     let base64_string = "/DAvAAAAAAAAAP///wViAAWKf+//CXVCAv4AUmXAAzUAAAAKAAhDVUVJADgyMWLvc/g=";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::SpliceInsert(
-//             SpliceInsert {
-//                 event_id: 1644168586,
-//                 scheduled_event: SpliceInsert.ScheduledEvent(
-//                     out_of_network_indicator: true,
-//                     is_immediate_splice: false,
-//                     splice_mode: .programSpliceMode(
-//                         SpliceInsert.ScheduledEvent.SpliceMode.ProgramMode(splice_time: SpliceTime(pts_time: 4453646850))
-//                     ),
-//                     break_duration: BreakDuration(
-//                         auto_return: true,
-//                         duration: 5400000
-//                     ),
-//                     unique_program_id: 821,
-//                     avail_num: 0,
-//                     avails_expected: 0
-//                 )
-//             )
-//         ),
-//         splice_descriptors: vec![
-//             .availDescriptor(
-//                 AvailDescriptor(
-//                     identifier: 1129661769,
-//                     providerAvailId: 3682865
-//                 )
-//             )
-//         ],
-//         crc_32: 0x62EF73F8,,
-//         non_fatal_errors: vec![],
-//         nonFatalErrors: [
-//             .unexpectedSpliceCommandLength(
-//                 UnexpectedSpliceCommandLengthErrorInfo(
-//                     declaredSpliceCommandLengthInBits: 32760,
-//                     actualSpliceCommandLengthInBits: 160,
-//                     spliceCommandType: .spliceInsert
-//                 )
-//             )
-//         ]
-//     )
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_bytes(
-//             BASE64_STANDARD
-//                 .decode(base64_string)
-//                 .expect("should be valid base64")
-//         )
-//         .expect("should be valid splice info section from base64"),
-//         "unexpected splice info section from base64"
-//     );
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_hex_string(hex_string)
-//             .expect("should be valid splice info section from hex"),
-//         "unexpected splice info section from hex"
-//     );
-// }
+#[test]
+fn test_splice_insert_avail_descriptor_base64() {
+    let base64_string = "/DAvAAAAAAAAAP///wViAAWKf+//CXVCAv4AUmXAAzUAAAAKAAhDVUVJADgyMWLvc/g=";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::SpliceInsert(SpliceInsert {
+            event_id: 1644168586,
+            scheduled_event: Some(splice_insert::ScheduledEvent {
+                out_of_network_indicator: true,
+                is_immediate_splice: false,
+                splice_mode: splice_insert::SpliceMode::ProgramSpliceMode(
+                    splice_insert::ProgramMode {
+                        splice_time: Some(SpliceTime {
+                            pts_time: Some(4453646850),
+                        }),
+                    },
+                ),
+                break_duration: Some(BreakDuration {
+                    auto_return: true,
+                    duration: 5400000,
+                }),
+                unique_program_id: 821,
+                avail_num: 0,
+                avails_expected: 0,
+            }),
+        }),
+        splice_descriptors: vec![SpliceDescriptor::AvailDescriptor(AvailDescriptor {
+            identifier: 1129661769,
+            provider_avail_id: 3682865,
+        })],
+        crc_32: 0x62EF73F8,
+        non_fatal_errors: vec![ParseError::UnexpectedSpliceCommandLength {
+            declared_splice_command_length_in_bits: 32760,
+            actual_splice_command_length_in_bits: 160,
+            splice_command_type: SpliceCommandType::SpliceInsert,
+        }],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_bytes(
+            BASE64_STANDARD
+                .decode(base64_string)
+                .expect("should be valid base64")
+        )
+        .expect("should be valid splice info section from base64"),
+        "unexpected splice info section from base64"
+    );
+}
 
 // #[test]
 // fn test_spliceInsert_hex() {

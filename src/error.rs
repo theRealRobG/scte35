@@ -56,7 +56,7 @@ pub enum ParseError {
         declared_splice_command_length_in_bits: u32,
         /// This is the number of bits that the SpliceCommand actually had after parsing had
         /// completed.
-        actual_splice_command_length_in_bits: u32,
+        actual_splice_command_length_in_bits: usize,
         /// The type of the splice command
         splice_command_type: SpliceCommandType,
     },
