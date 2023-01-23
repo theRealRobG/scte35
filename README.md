@@ -1,5 +1,5 @@
 # scte35
-scte35 is a SCTE35 parser that has been translated from Swift into Rust using my [SCTE35Parser](https:github.com/theRealRobG/SCTE35Parser) implementation as a base.
+scte35 is a SCTE35 parser that has been translated from Swift into Rust using my [SCTE35Parser](https://github.com/theRealRobG/SCTE35Parser) implementation as a base.
 
 The 2020 SCTE-25 specification was used and can be found included in the Swift implementation repository.
 
