@@ -1,5 +1,3 @@
-use bitter::BigEndianReader;
-
 use crate::{
     bit_reader::Bits,
     error::ParseError,
@@ -7,6 +5,7 @@ use crate::{
     splice_command::SpliceCommand,
     splice_descriptor::{try_splice_descriptors_from, SpliceDescriptor},
 };
+use bitter::BigEndianReader;
 
 /// The `SpliceInfoSection` shall be carried in transport packets whereby only one section or
 /// partial section may be in any transport packet. `SpliceInfoSection`s shall always start at the

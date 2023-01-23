@@ -1,6 +1,5 @@
-use crate::{bit_reader::Bits, error::ParseError};
-
 use super::DescriptorLengthExpectation;
+use crate::{bit_reader::Bits, error::ParseError};
 
 /// The `TimeDescriptor` is an implementation of a `SpliceDescriptor`. It provides an optional
 /// extension to the `SpliceInsert`, `SpliceNull` and `TimeSignal` commands that allows a

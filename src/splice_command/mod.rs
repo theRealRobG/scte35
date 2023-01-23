@@ -1,9 +1,8 @@
-use crate::{bit_reader::Bits, error::ParseError};
-
 use self::{
     private_command::PrivateCommand, splice_insert::SpliceInsert, splice_schedule::SpliceSchedule,
     time_signal::TimeSignal,
 };
+use crate::{bit_reader::Bits, error::ParseError};
 
 pub mod private_command;
 pub mod splice_insert;

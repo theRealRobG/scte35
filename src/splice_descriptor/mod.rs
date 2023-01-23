@@ -1,10 +1,9 @@
-use crate::{bit_reader::Bits, error::ParseError};
-
 use self::{
     audio_descriptor::AudioDescriptor, avail_descriptor::AvailDescriptor,
     dtmf_descriptor::DTMFDescriptor, segmentation_descriptor::SegmentationDescriptor,
     time_descriptor::TimeDescriptor,
 };
+use crate::{bit_reader::Bits, error::ParseError};
 
 pub mod audio_descriptor;
 pub mod avail_descriptor;
