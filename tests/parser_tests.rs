@@ -10,6 +10,7 @@ use scte35::{
     },
     splice_descriptor::{
         avail_descriptor::AvailDescriptor,
+        dtmf_descriptor::DTMFDescriptor,
         segmentation_descriptor::{
             self, DeliveryRestrictions, DeviceRestrictions, ManagedPrivateUPID,
             SegmentationDescriptor, SegmentationTypeID, SegmentationUPID, SegmentationUPIDType,
@@ -1700,147 +1701,136 @@ fn test_splice_insert_in() {
     );
 }
 
-// // Example taken from https://github.com/futzu/threefive/blob/441ba290854f0ddc7baccc7350e25ee8148665cd/examples/dtmf/Dtmf_Descriptor.py
-// #[test]
-// fn test_dtmf_withAlignmentStuffing() {
-//     let base64_string = "/DAsAAAAAAAAAP/wDwUAAABef0/+zPACTQAAAAAADAEKQ1VFSbGfMTIxIxGolm3/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::SpliceInsert(
-//             SpliceInsert {
-//                 event_id: 94,
-//                 scheduled_event: SpliceInsert.ScheduledEvent(
-//                     out_of_network_indicator: false,
-//                     is_immediate_splice: false,
-//                     splice_mode: .programSpliceMode(
-//                         SpliceInsert.ScheduledEvent.SpliceMode.ProgramMode(splice_time: SpliceTime(pts_time: 3438281293))
-//                     ),
-//                     break_duration: nil,
-//                     unique_program_id: 0,
-//                     avail_num: 0,
-//                     avails_expected: 0
-//                 )
-//             )
-//         ),
-//         splice_descriptors: vec![
-//             .dtmfDescriptor(
-//                 DTMFDescriptor(
-//                     identifier: 1129661769,
-//                     preroll: 177,
-//                     dtmfChars: "121#"
-//                 )
-//             )
-//         ],
-//         crc_32: 0xFFFFFFFF,
-//         non_fatal_errors: vec![],
-//     )
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_bytes(
-//             BASE64_STANDARD
-//                 .decode(base64_string)
-//                 .expect("should be valid base64")
-//         )
-//         .expect("should be valid splice info section from base64"),
-//         "unexpected splice info section from base64"
-//     );
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_hex_string(hex_string)
-//             .expect("should be valid splice info section from hex"),
-//         "unexpected splice info section from hex"
-//     );
-// }
+// Example taken from https://github.com/futzu/threefive/blob/441ba290854f0ddc7baccc7350e25ee8148665cd/examples/dtmf/Dtmf_Descriptor.py
+#[test]
+fn test_dtmf_with_alignment_stuffing() {
+    let base64_string = "/DAsAAAAAAAAAP/wDwUAAABef0/+zPACTQAAAAAADAEKQ1VFSbGfMTIxIxGolm3/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::SpliceInsert(SpliceInsert {
+            event_id: 94,
+            scheduled_event: Some(splice_insert::ScheduledEvent {
+                out_of_network_indicator: false,
+                is_immediate_splice: false,
+                splice_mode: splice_insert::SpliceMode::ProgramSpliceMode(
+                    splice_insert::ProgramMode {
+                        splice_time: Some(SpliceTime {
+                            pts_time: Some(3438281293),
+                        }),
+                    },
+                ),
+                break_duration: None,
+                unique_program_id: 0,
+                avail_num: 0,
+                avails_expected: 0,
+            }),
+        }),
+        splice_descriptors: vec![SpliceDescriptor::DTMFDescriptor(DTMFDescriptor {
+            identifier: 1129661769,
+            preroll: 177,
+            dtmf_chars: String::from("121#"),
+        })],
+        crc_32: 0xFFFFFFFF,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_bytes(
+            BASE64_STANDARD
+                .decode(base64_string)
+                .expect("should be valid base64")
+        )
+        .expect("should be valid splice info section from base64"),
+        "unexpected splice info section from base64"
+    );
+}
 
-// // Example taken from https://github.com/futzu/threefive/blob/8025c0f7df31a4a4f7649cb68a4b4f0e560b73f5/examples/splicenull/Splice_Null.cue
-// #[test]
-// fn test_spliceNull() {
-//     let hex_string = "0xFC301100000000000000FFFFFF0000004F253396";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: .spliceNull,
-//         splice_descriptors: vec![],
-//         crc_32: 0x4F253396,,
-//         non_fatal_errors: vec![],
-//         nonFatalErrors: [
-//             .unexpectedSpliceCommandLength(
-//                 UnexpectedSpliceCommandLengthErrorInfo(
-//                     declaredSpliceCommandLengthInBits: 32760,
-//                     actualSpliceCommandLengthInBits: 0,
-//                     spliceCommandType: .spliceNull
-//                 )
-//             )
-//         ]
-//     )
-// }
+// Example taken from https://github.com/futzu/threefive/blob/8025c0f7df31a4a4f7649cb68a4b4f0e560b73f5/examples/splicenull/Splice_Null.cue
+#[test]
+fn test_splice_null() {
+    let hex_string = "0xFC301100000000000000FFFFFF0000004F253396";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::SpliceNull,
+        splice_descriptors: vec![],
+        crc_32: 0x4F253396,
+        non_fatal_errors: vec![ParseError::UnexpectedSpliceCommandLength {
+            declared_splice_command_length_in_bits: 32760,
+            actual_splice_command_length_in_bits: 0,
+            splice_command_type: SpliceCommandType::SpliceNull,
+        }],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_hex_string(hex_string)
+            .expect("should be valid splice info section from hex"),
+        "unexpected splice info section from hex"
+    );
+}
 
-// // MARK: - Further examples
+// MARK: - Further examples
 
-// #[test]
-// fn test_timeSignal_segmentationDescriptor_mid() {
-//     let base64_string = "/DBwAAAAAAAAAP/wBQb/AAAAAABaAlhDVUVJAAAAAn//AABSZcANRAoMFHeL5eP2AAAAAAAACgwUd4vl4/YAAAAAAAAJJlNJR05BTDpMeTlFTUd4S1IwaEZaVXRwTUhkQ1VWWm5SVUZuWnowNgEB1Dao2g==";
-//     let expected_splice_info_section = SpliceInfoSection(
-//         table_id: 252,
-//         sap_type: SAPType::Unspecified,
-//         protocol_version: 0,
-//         encrypted_packet: None,
-//         pts_adjustment: 0,
-//         tier: 0xFFF,
-//         splice_command: SpliceCommand::TimeSignal(TimeSignal { splice_time: SpliceTime { pts_time: Some(4294967296) } }),
-//         splice_descriptors: vec![
-//             SpliceDescriptor::SegmentationDescriptor(
-//                 SegmentationDescriptor(
-//                     identifier: 1129661769,
-//                     event_id: 2,
-//                     scheduled_event: segmentation_descriptor::ScheduledEvent(
-//                         delivery_restrictions: None,
-//                         component_segments: None,
-//                         segmentation_duration: 5400000,
-//                         segmentation_upid: .mid(
-//                             [
-//                                 // TODO - EIDR DOI suffix is not always ISAN, as demonstrated here.
-//                                 // It may be worth creating a struct for the EIDR so as not to force
-//                                 // an unexpected format (the below examples should be "10.5239/8BE5-E3F6").
-//                                 .eidr("10.5239/8BE5-E3F6-0000-0000-0000-B"),
-//                                 .eidr("10.5239/8BE5-E3F6-0000-0000-0000-B"),
-//                                 .adi("SIGNAL:Ly9EMGxKR0hFZUtpMHdCUVZnRUFnZz0")
-//                             ]
-//                         ),
-//                         segmentation_type_id: .distributorPlacementOpportunityStart,
-//                         segment_num: 1,
-//                         segments_expected: 1,
-//                         sub_segment: None
-//                     )
-//                 )
-//             )
-//         ],
-//         crc_32: 0xD436A8DA,
-//         non_fatal_errors: vec![],
-//     )
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_bytes(
-//             BASE64_STANDARD
-//                 .decode(base64_string)
-//                 .expect("should be valid base64")
-//         )
-//         .expect("should be valid splice info section from base64"),
-//         "unexpected splice info section from base64"
-//     );
-//     assert_eq!(
-//         &expected_splice_info_section,
-//         &SpliceInfoSection::try_from_hex_string(hex_string)
-//             .expect("should be valid splice info section from hex"),
-//         "unexpected splice info section from hex"
-//     );
-// }
+#[test]
+fn test_time_signal_segmentation_descriptor_mid() {
+    let base64_string = "/DBwAAAAAAAAAP/wBQb/AAAAAABaAlhDVUVJAAAAAn//AABSZcANRAoMFHeL5eP2AAAAAAAACgwUd4vl4/YAAAAAAAAJJlNJR05BTDpMeTlFTUd4S1IwaEZaVXRwTUhkQ1VWWm5SVUZuWnowNgEB1Dao2g==";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::TimeSignal(TimeSignal {
+            splice_time: SpliceTime {
+                pts_time: Some(4294967296),
+            },
+        }),
+        splice_descriptors: vec![SpliceDescriptor::SegmentationDescriptor(
+            SegmentationDescriptor {
+                identifier: 1129661769,
+                event_id: 2,
+                scheduled_event: Some(segmentation_descriptor::ScheduledEvent {
+                    delivery_restrictions: None,
+                    component_segments: None,
+                    segmentation_duration: Some(5400000),
+                    segmentation_upid: SegmentationUPID::MID(vec![
+                        // TODO - EIDR DOI suffix is not always ISAN, as demonstrated here.
+                        // It may be worth creating a struct for the EIDR so as not to force
+                        // an unexpected format (the below examples should be "10.5239/8BE5-E3F6").
+                        SegmentationUPID::EIDR(String::from("10.5239/8BE5-E3F6-0000-0000-0000-B")),
+                        SegmentationUPID::EIDR(String::from("10.5239/8BE5-E3F6-0000-0000-0000-B")),
+                        SegmentationUPID::ADI(String::from(
+                            "SIGNAL:Ly9EMGxKR0hFZUtpMHdCUVZnRUFnZz0",
+                        )),
+                    ]),
+                    segmentation_type_id: SegmentationTypeID::DistributorPlacementOpportunityStart,
+                    segment_num: 1,
+                    segments_expected: 1,
+                    sub_segment: None,
+                }),
+            },
+        )],
+        crc_32: 0xD436A8DA,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_bytes(
+            BASE64_STANDARD
+                .decode(base64_string)
+                .expect("should be valid base64")
+        )
+        .expect("should be valid splice info section from base64"),
+        "unexpected splice info section from base64"
+    );
+}
