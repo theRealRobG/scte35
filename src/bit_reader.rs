@@ -19,30 +19,18 @@ impl<'a> Bits<'a> {
     }
 
     pub fn u8(&mut self, n: u32) -> u8 {
-        // let b = self.bits.peek(n) as u8;
-        // self.bits.consume(n);
-        // b
         self.bits.read_bits(n).unwrap() as u8
     }
 
     pub fn u16(&mut self, n: u32) -> u16 {
-        // let b = self.bits.peek(n) as u16;
-        // self.bits.consume(n);
-        // b
         self.bits.read_bits(n).unwrap() as u16
     }
 
     pub fn u32(&mut self, n: u32) -> u32 {
-        // let b = self.bits.peek(n) as u32;
-        // self.bits.consume(n);
-        // b
         self.bits.read_bits(n).unwrap() as u32
     }
 
     pub fn u64(&mut self, n: u32) -> u64 {
-        // let b = self.bits.peek(n);
-        // self.bits.consume(n);
-        // b
         self.bits.read_bits(n).unwrap()
     }
 
