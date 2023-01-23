@@ -68,7 +68,7 @@ fn test_time_signal_placement_opportunity_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -126,7 +126,7 @@ fn test_splice_insert() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -185,7 +185,7 @@ fn test_time_signal_placement_opportunity_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -263,7 +263,7 @@ fn test_time_signal_program_start_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -322,7 +322,7 @@ fn test_time_signal_program_overlap_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -400,7 +400,7 @@ fn test_time_signal_program_blackoutoverride_program_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -459,7 +459,7 @@ fn test_time_signal_program_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -556,7 +556,7 @@ fn test_time_signal_program_start_end_placement_opportunity_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -609,7 +609,7 @@ fn test_time_signal_segmentation_descriptor_ad_id() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -655,7 +655,7 @@ fn test_time_signal_segmentation_descriptor_umid() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -702,7 +702,7 @@ fn test_time_signal_segmentation_descriptor_isan_program_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -748,7 +748,7 @@ fn test_time_signal_segmentation_descriptor_isan_program_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -793,7 +793,7 @@ fn test_time_signal_segmentation_descriptor_tid_program_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -837,7 +837,7 @@ fn test_time_signal_segmentation_descriptor_tid_program_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -883,7 +883,7 @@ fn test_time_signal_segmentation_descriptor_adi_ppo_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -931,7 +931,7 @@ fn test_time_signal_segmentation_descriptor_adi_ppo_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -978,7 +978,7 @@ fn test_time_signal_segmentation_descriptor_eidr_program_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1051,7 +1051,7 @@ fn test_time_signal_segmentation_descriptor_atsc_content_identifier_program_star
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1102,7 +1102,7 @@ fn test_time_signal_segmentation_descriptor_atsc_content_identifier_program_end(
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1181,7 +1181,7 @@ fn test_time_signal_segmentation_descriptor_ti_mpu() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1236,7 +1236,7 @@ fn test_time_signal_segmentation_descriptor_mid_ads_ti() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1282,7 +1282,7 @@ fn test_time_signal_segmentation_descriptor_ads_program_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1328,7 +1328,7 @@ fn test_time_signal_segmentation_descriptor_ads_program_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1374,7 +1374,7 @@ fn test_time_signal_segmentation_descriptor_uri_program_start() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1420,7 +1420,7 @@ fn test_time_signal_segmentation_descriptor_uri_program_end() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1520,7 +1520,7 @@ fn test_splice_insert_avail_descriptor_base64() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1648,7 +1648,7 @@ fn test_splice_insert_out() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1692,7 +1692,7 @@ fn test_splice_insert_in() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1741,7 +1741,7 @@ fn test_dtmf_with_alignment_stuffing() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )
@@ -1826,7 +1826,7 @@ fn test_time_signal_segmentation_descriptor_mid() {
     assert_eq!(
         &expected_splice_info_section,
         &SpliceInfoSection::try_from_bytes(
-            BASE64_STANDARD
+            &BASE64_STANDARD
                 .decode(base64_string)
                 .expect("should be valid base64")
         )

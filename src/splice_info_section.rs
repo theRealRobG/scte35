@@ -118,10 +118,10 @@ impl SpliceInfoSection {
         } else {
             hex::decode_hex(hex_string)?
         };
-        Self::try_from_bytes(data)
+        Self::try_from_bytes(&data)
     }
 
-    pub fn try_from_bytes(data: Vec<u8>) -> Result<SpliceInfoSection, ParseError> {
+    pub fn try_from_bytes(data: &[u8]) -> Result<SpliceInfoSection, ParseError> {
         let mut bit_reader = BigEndianReader::new(&data);
         let mut bits = Bits::new(&mut bit_reader);
         bits.validate(
