@@ -11,42 +11,42 @@ use bitter::BigEndianReader;
 /// partial section may be in any transport packet. `SpliceInfoSection`s shall always start at the
 /// beginning of a transport packet payload.
 /**
- ```
- // {
- //   table_id                         8 uimsbf
- //   section_syntax_indicator         1 bslbf
- //   private_indicator                1 bslbf
- //   sap_type                         2 bslbf
- //   section_length                  12 uimsbf
- //   protocol_version                 8 uimsbf
- //   encrypted_packet                 1 bslbf
- //   encryption_algorithm             6 uimsbf
- //   pts_adjustment                  33 uimsbf
- //   cw_index                         8 uimsbf
- //   tier                            12 bslbf
- //   splice_command_length           12 uimsbf
- //   splice_command_type              8 uimsbf E
- //   if(splice_command_type == 0x00)
- //     splice_null()                           E
- //   if(splice_command_type == 0x04)
- //     splice_schedule()                       E
- //   if(splice_command_type == 0x05)
- //     splice_insert()                         E
- //   if(splice_command_type == 0x06)
- //     time_signal()                           E
- //   if(splice_command_type == 0x07)
- //     bandwidth_reservation()                 E
- //   if(splice_command_type == 0xff)
- //     private_command()                       E
- //   descriptor_loop_length          16 uimsbf E
- //   for(i=0; i<N1; i++)
- //     splice_descriptor()                     E
- //   for(i=0; i<N2; i++)
- //     alignment_stuffing             8 bslbf  E
- //   if(encrypted_packet)
- //     E_CRC_32                      32 rpchof E
- //   CRC_32                          32 rpchof
- // }
+```text
+{
+  table_id                         8 uimsbf
+  section_syntax_indicator         1 bslbf
+  private_indicator                1 bslbf
+  sap_type                         2 bslbf
+  section_length                  12 uimsbf
+  protocol_version                 8 uimsbf
+  encrypted_packet                 1 bslbf
+  encryption_algorithm             6 uimsbf
+  pts_adjustment                  33 uimsbf
+  cw_index                         8 uimsbf
+  tier                            12 bslbf
+  splice_command_length           12 uimsbf
+  splice_command_type              8 uimsbf E
+  if(splice_command_type == 0x00)
+    splice_null()                           E
+  if(splice_command_type == 0x04)
+    splice_schedule()                       E
+  if(splice_command_type == 0x05)
+    splice_insert()                         E
+  if(splice_command_type == 0x06)
+    time_signal()                           E
+  if(splice_command_type == 0x07)
+    bandwidth_reservation()                 E
+  if(splice_command_type == 0xff)
+    private_command()                       E
+  descriptor_loop_length          16 uimsbf E
+  for(i=0; i<N1; i++)
+    splice_descriptor()                     E
+  for(i=0; i<N2; i++)
+    alignment_stuffing             8 bslbf  E
+  if(encrypted_packet)
+    E_CRC_32                      32 rpchof E
+  CRC_32                          32 rpchof
+}
 */
 #[derive(PartialEq, Eq, Debug)]
 pub struct SpliceInfoSection {

@@ -4,12 +4,12 @@ use crate::{bit_reader::Bits, error::ParseError};
 /// be used to give the splicer an indication of when the break will be over and when the
 /// network in point will occur.
 /**
-```
-// break_duration() {
-//   auto_return       1 bslbf
-//   reserved          6 bslbf
-//   duration         33 uimsbf
-// }
+```text
+break_duration() {
+  auto_return       1 bslbf
+  reserved          6 bslbf
+  duration         33 uimsbf
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]
@@ -42,15 +42,15 @@ impl BreakDuration {
 /// The `SpliceTime` structure, when modified by `pts_adjustment`, specifies the time of the splice
 /// event.
 /**
-```
-// splice_time() {
-//   time_specified_flag             1 bslbf
-//   if(time_specified_flag == 1) {
-//     reserved                      6 bslbf
-//     pts_time                     33 uimsbf
-//   } else
-//     reserved                      7 bslbf
-// }
+```text
+splice_time() {
+  time_specified_flag             1 bslbf
+  if(time_specified_flag == 1) {
+    reserved                      6 bslbf
+    pts_time                     33 uimsbf
+  } else
+    reserved                      7 bslbf
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

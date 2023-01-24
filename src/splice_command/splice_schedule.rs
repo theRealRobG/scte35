@@ -3,35 +3,35 @@ use crate::{bit_reader::Bits, error::ParseError, time::BreakDuration};
 /// The `SpliceSchedule` command is provided to allow a schedule of splice events to be conveyed
 /// in advance.
 /**
-```
-// splice_schedule() {
-//   splice_count                                   8 uimsbf
-//   for (i=0; i<splice_count; i++) {
-//     splice_event_id                             32 uimsbf
-//     splice_event_cancel_indicator                1 bslbf
-//     reserved                                     7 bslbf
-//     if (splice_event_cancel_indicator == '0') {
-//       out_of_network_indicator                   1 bslbf
-//       program_splice_flag                        1 bslbf
-//       duration_flag                              1 bslbf
-//       reserved                                   5 bslbf
-//       if (program_splice_flag == '1')
-//         utc_splice_time                         32 uimsbf
-//       if (program_splice_flag == '0') {
-//         component_count                          8 uimsbf
-//         for(j=0;j<component_count;j++) {
-//           component_tag                          8 uimsbf
-//           utc_splice_time                       32 uimsbf
-//         }
-//       }
-//       if (duration_flag)
-//         break_duration()
-//       unique_program_id                         16 uimsbf
-//       avail_num                                  8 uimsbf
-//       avails_expected                            8 uimsbf
-//     }
-//   }
-// }
+```text
+splice_schedule() {
+  splice_count                                   8 uimsbf
+  for (i=0; i<splice_count; i++) {
+    splice_event_id                             32 uimsbf
+    splice_event_cancel_indicator                1 bslbf
+    reserved                                     7 bslbf
+    if (splice_event_cancel_indicator == '0') {
+      out_of_network_indicator                   1 bslbf
+      program_splice_flag                        1 bslbf
+      duration_flag                              1 bslbf
+      reserved                                   5 bslbf
+      if (program_splice_flag == '1')
+        utc_splice_time                         32 uimsbf
+      if (program_splice_flag == '0') {
+        component_count                          8 uimsbf
+        for(j=0;j<component_count;j++) {
+          component_tag                          8 uimsbf
+          utc_splice_time                       32 uimsbf
+        }
+      }
+      if (duration_flag)
+        break_duration()
+      unique_program_id                         16 uimsbf
+      avail_num                                  8 uimsbf
+      avails_expected                            8 uimsbf
+    }
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

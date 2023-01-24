@@ -5,18 +5,18 @@ use crate::{bit_reader::Bits, error::ParseError};
 /// extension to the `SpliceInsert` command that allows a receiver device to generate a legacy
 /// analogue DTMF sequence based on a `SpliceInfoSection` being received.
 /**
-```
-// DTMF_descriptor() {
-//   splice_descriptor_tag          8 uimsbf
-//   descriptor_length              8 uimsbf
-//   identifier                    32 uimsbf
-//   preroll                        8 uimsbf
-//   dtmf_count                     3 uimsbf
-//   reserved                       5 bslbf
-//   for(i=0; i<dtmf_count; i++) {
-//     DTMF_char                    8 uimsbf
-//   }
-// }
+```text
+DTMF_descriptor() {
+  splice_descriptor_tag          8 uimsbf
+  descriptor_length              8 uimsbf
+  identifier                    32 uimsbf
+  preroll                        8 uimsbf
+  dtmf_count                     3 uimsbf
+  reserved                       5 bslbf
+  for(i=0; i<dtmf_count; i++) {
+    DTMF_char                    8 uimsbf
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

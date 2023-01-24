@@ -11,10 +11,10 @@ use crate::{bit_reader::Bits, error::ParseError, time::SpliceTime};
 /// command. It must be understood that using it in this manner will cause an unspecified amount of
 /// accuracy error.
 /**
-```
-// time_signal() {
-//   splice_time()
-// }
+```text
+time_signal() {
+  splice_time()
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

@@ -4,20 +4,20 @@ use crate::{bit_reader::Bits, error::ParseError};
 /// a period of uniqueness. A “house number” is any number that the holder of the TSID wishes as
 /// constrained herein. Numbers are unique for each value of TSID.
 /**
-```
-// {
-//   TSID       16 uimsbf
-//   reserved    2 bslbf
-//   end_of_day  5 uimsbf
-//   unique_for  9 uimsbf
-//   content_id
-// }
+```text
+{
+  TSID       16 uimsbf
+  reserved    2 bslbf
+  end_of_day  5 uimsbf
+  unique_for  9 uimsbf
+  content_id
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]
 pub struct ATSCContentIdentifier {
     /// This 16 bit unsigned integer field shall contain a value of `transport_stream_id` per
-    /// section 6.3.1 of A/65 [3]. Note: The assigning authority for these values for the United
+    /// section 6.3.1 of A/65 \[3\]. Note: The assigning authority for these values for the United
     /// States is the FCC. Ranges for Mexico, Canada, and the United States have been
     /// established by formal agreement among these countries. Values in other regions are
     /// established by appropriate authorities.
@@ -87,73 +87,73 @@ impl ATSCContentIdentifier {
 /// are present in BSI or audblk to fully describe Ch2. Table 5.8 also indicates the channel
 /// ordering (the order in which the channels are processed) for each of the modes.
 /**
-```
-// acmod Audio Coding Mode nfchans Channel Array Ordering
-// ‘000’ 1+1               2       Ch1, Ch2
-// ‘001’ 1/0               1       C
-// ‘010’ 2/0               2       L, R
-// ‘011’ 3/0               3       L, C, R
-// ‘100’ 2/1               3       L, R, S
-// ‘101’ 3/1               4       L, C, R, S
-// ‘110’ 2/2               4       L, R, SL, SR
-// ‘111’ 3/2               5       L, C, R, SL, SR
+```text
+acmod Audio Coding Mode nfchans Channel Array Ordering
+‘000’ 1+1               2       Ch1, Ch2
+‘001’ 1/0               1       C
+‘010’ 2/0               2       L, R
+‘011’ 3/0               3       L, C, R
+‘100’ 2/1               3       L, R, S
+‘101’ 3/1               4       L, C, R, S
+‘110’ 2/2               4       L, R, SL, SR
+‘111’ 3/2               5       L, C, R, SL, SR
 ```
 */
 #[derive(PartialEq, Eq, Debug)]
 pub enum AudioCodingMode {
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘000’ 1+1               2       Ch1, Ch2
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘000’ 1+1               2       Ch1, Ch2
     ```
     */
     OneAndOne,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘001’ 1/0               1       C
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘001’ 1/0               1       C
     ```
     */
     OneZero,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘010’ 2/0               2       L, R
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘010’ 2/0               2       L, R
     ```
     */
     TwoZero,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘011’ 3/0               3       L, C, R
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘011’ 3/0               3       L, C, R
     ```
     */
     ThreeZero,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘100’ 2/1               3       L, R, S
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘100’ 2/1               3       L, R, S
     ```
     */
     TwoOne,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘101’ 3/1               4       L, C, R, S
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘101’ 3/1               4       L, C, R, S
     ```
     */
     ThreeOne,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘110’ 2/2               4       L, R, SL, SR
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘110’ 2/2               4       L, R, SL, SR
     ```
     */
     TwoTwo,
     /**
-    ```
-    // acmod Audio Coding Mode nfchans Channel Array Ordering
-    // ‘111’ 3/2               5       L, C, R, SL, SR
+    ```text
+    acmod Audio Coding Mode nfchans Channel Array Ordering
+    ‘111’ 3/2               5       L, C, R, SL, SR
     ```
     */
     ThreeTwo,
@@ -196,17 +196,17 @@ impl AudioCodingMode {
 ///
 /// This 3-bit code indicates the type of service that the bit stream conveys.
 /**
-```
-// bsmod acmod         Type of Service
-// ‘000’ any           main audio service: complete main (CM)
-// ‘001’ any           main audio service: music and effects (ME)
-// ‘010’ any           associated service: visually impaired (VI)
-// ‘011’ any           associated service: hearing impaired (HI)
-// ‘100’ any           associated service: dialogue (D)
-// ‘101’ any           associated service: commentary (C)
-// ‘110’ any           associated service: emergency (E)
-// ‘111’ ‘001’         associated service: voice over (VO)
-// ‘111’ ‘010’ - ‘111’ main audio service: karaoke
+```text
+bsmod acmod         Type of Service
+‘000’ any           main audio service: complete main (CM)
+‘001’ any           main audio service: music and effects (ME)
+‘010’ any           associated service: visually impaired (VI)
+‘011’ any           associated service: hearing impaired (HI)
+‘100’ any           associated service: dialogue (D)
+‘101’ any           associated service: commentary (C)
+‘110’ any           associated service: emergency (E)
+‘111’ ‘001’         associated service: voice over (VO)
+‘111’ ‘010’ - ‘111’ main audio service: karaoke
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

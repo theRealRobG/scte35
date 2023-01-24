@@ -24,15 +24,15 @@ pub mod time_descriptor;
 /// `section_length` in `SpliceInfoSection`, although there may be other practical or
 /// implementation limits.
 /**
-```
-// splice_descriptor() {
-//   splice_descriptor_tag  8 uimsbf
-//   descriptor_length      8 uimsbf
-//   identifier            32 uimsbf
-//   for(i=0; i<N; i++) {
-//     private_byte         8 uimsbf
-//   }
-// }
+```text
+splice_descriptor() {
+  splice_descriptor_tag  8 uimsbf
+  descriptor_length      8 uimsbf
+  identifier            32 uimsbf
+  for(i=0; i<N; i++) {
+    private_byte         8 uimsbf
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

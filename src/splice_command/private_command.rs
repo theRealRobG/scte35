@@ -5,13 +5,13 @@ use crate::{bit_reader::Bits, error::ParseError};
 /// unique for each participating vendor. Receiving equipment should skip any `SpliceInfoSection`
 /// messages containing `PrivateCommand` structures with unknown identifiers.
 /**
-```
-// private_command() {
-//   identifier           32 uimsbf
-//   for(i=0; i<N; i++) {
-//     private_byte        8 uimsbf
-//   }
-// }
+```text
+private_command() {
+  identifier           32 uimsbf
+  for(i=0; i<N; i++) {
+    private_byte        8 uimsbf
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

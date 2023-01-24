@@ -6,34 +6,34 @@ use crate::{
 
 /// The `SpliceInsert` command shall be sent at least once for every splice event.
 /**
-```
-// splice_insert() {
-//   splice_event_id                                                      32 uimsbf
-//   splice_event_cancel_indicator                                         1 bslbf
-//   reserved                                                              7 bslbf
-//   if(splice_event_cancel_indicator == '0') {
-//     out_of_network_indicator                                            1 bslbf
-//     program_splice_flag                                                 1 bslbf
-//     duration_flag                                                       1 bslbf
-//     splice_immediate_flag                                               1 bslbf
-//     reserved                                                            4 bslbf
-//     if((program_splice_flag == '1') && (splice_immediate_flag == '0'))
-//       splice_time()
-//     if(program_splice_flag == '0') {
-//       component_count                                                   8 uimsbf
-//       for(i=0;i<component_count;i++) {
-//         component_tag                                                   8 uimsbf
-//         if(splice_immediate_flag == '0')
-//           splice_time()
-//       }
-//     }
-//     if(duration_flag == '1')
-//       break_duration()
-//     unique_program_id                                                  16 uimsbf
-//     avail_num                                                           8 uimsbf
-//     avails_expected                                                     8 uimsbf
-//   }
-// }
+```text
+splice_insert() {
+  splice_event_id                                                      32 uimsbf
+  splice_event_cancel_indicator                                         1 bslbf
+  reserved                                                              7 bslbf
+  if(splice_event_cancel_indicator == '0') {
+    out_of_network_indicator                                            1 bslbf
+    program_splice_flag                                                 1 bslbf
+    duration_flag                                                       1 bslbf
+    splice_immediate_flag                                               1 bslbf
+    reserved                                                            4 bslbf
+    if((program_splice_flag == '1') && (splice_immediate_flag == '0'))
+      splice_time()
+    if(program_splice_flag == '0') {
+      component_count                                                   8 uimsbf
+      for(i=0;i<component_count;i++) {
+        component_tag                                                   8 uimsbf
+        if(splice_immediate_flag == '0')
+          splice_time()
+      }
+    }
+    if(duration_flag == '1')
+      break_duration()
+    unique_program_id                                                  16 uimsbf
+    avail_num                                                           8 uimsbf
+    avails_expected                                                     8 uimsbf
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

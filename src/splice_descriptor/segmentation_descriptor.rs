@@ -11,51 +11,51 @@ use ::std::fmt::Write;
 /// accurately. Devices that do not recognize a value in any field shall ignore the message and
 /// take no action.
 /**
-```
-// segmentation_descriptor() {
-//   splice_descriptor_tag                             8 uimsbf
-//   descriptor_length                                 8 uimsbf
-//   identifier                                       32 uimsbf
-//   segmentation_event_id                            32 uimsbf
-//   segmentation_event_cancel_indicator               1 bslbf
-//   reserved                                          7 bslbf
-//   if(segmentation_event_cancel_indicator == ‘0’) {
-//     program_segmentation_flag                       1 bslbf
-//     segmentation_duration_flag                      1 bslbf
-//     delivery_not_restricted_flag                    1 bslbf
-//     if(delivery_not_restricted_flag == ‘0’) {
-//       web_delivery_allowed_flag                     1 bslbf
-//       no_regional_blackout_flag                     1 bslbf
-//       archive_allowed_flag                          1 bslbf
-//       device_restrictions                           2 bslbf
-//     } else {
-//       reserved                                      5 bslbf
-//     }
-//     if(program_segmentation_flag == ‘0’) {
-//       component_count                               8 uimsbf
-//       for(i=0;i<component_count;i++) {
-//         component_tag                               8 uimsbf
-//         reserved                                    7 bslbf
-//         pts_offset                                 33 uimsbf
-//       }
-//     }
-//     if(segmentation_duration_flag == ‘1’)
-//       segmentation_duration                        40 uimsbf
-//     segmentation_upid_type                          8 uimsbf
-//     segmentation_upid_length                        8 uimsbf
-//     segmentation_upid()
-//     segmentation_type_id                            8 uimsbf
-//     segment_num                                     8 uimsbf
-//     segments_expected                               8 uimsbf
-//     if(segmentation_type_id == ‘0x34’ ||
-//       segmentation_type_id == ‘0x36’ ||
-//       segmentation_type_id == ‘0x38’ ||
-//       segmentation_type_id == ‘0x3A’) {
-//         sub_segment_num                             8 uimsbf
-//         sub_segments_expected                       8 uimsbf
-//     }
-//   }
-// }
+```text
+segmentation_descriptor() {
+  splice_descriptor_tag                             8 uimsbf
+  descriptor_length                                 8 uimsbf
+  identifier                                       32 uimsbf
+  segmentation_event_id                            32 uimsbf
+  segmentation_event_cancel_indicator               1 bslbf
+  reserved                                          7 bslbf
+  if(segmentation_event_cancel_indicator == ‘0’) {
+    program_segmentation_flag                       1 bslbf
+    segmentation_duration_flag                      1 bslbf
+    delivery_not_restricted_flag                    1 bslbf
+    if(delivery_not_restricted_flag == ‘0’) {
+      web_delivery_allowed_flag                     1 bslbf
+      no_regional_blackout_flag                     1 bslbf
+      archive_allowed_flag                          1 bslbf
+      device_restrictions                           2 bslbf
+    } else {
+      reserved                                      5 bslbf
+    }
+    if(program_segmentation_flag == ‘0’) {
+      component_count                               8 uimsbf
+      for(i=0;i<component_count;i++) {
+        component_tag                               8 uimsbf
+        reserved                                    7 bslbf
+        pts_offset                                 33 uimsbf
+      }
+    }
+    if(segmentation_duration_flag == ‘1’)
+      segmentation_duration                        40 uimsbf
+    segmentation_upid_type                          8 uimsbf
+    segmentation_upid_length                        8 uimsbf
+    segmentation_upid()
+    segmentation_type_id                            8 uimsbf
+    segment_num                                     8 uimsbf
+    segments_expected                               8 uimsbf
+    if(segmentation_type_id == ‘0x34’ ||
+      segmentation_type_id == ‘0x36’ ||
+      segmentation_type_id == ‘0x38’ ||
+      segmentation_type_id == ‘0x3A’) {
+        sub_segment_num                             8 uimsbf
+        sub_segments_expected                       8 uimsbf
+    }
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]
@@ -542,8 +542,8 @@ pub enum SegmentationUPID {
     /// SCTE 2362 provides compatibility with this identifier model as described in [SCTE 236]
     /// Section 7.11.1.
     ADI(String),
-    /// An EIDR (see [EIDR]) represented in Compact Binary encoding as defined in Section 2.1.1 in
-    /// EIDR ID Format (see [EIDR ID FORMAT])
+    /// An EIDR (see \[EIDR\]) represented in Compact Binary encoding as defined in Section 2.1.1
+    /// in EIDR ID Format (see [EIDR ID FORMAT])
     EIDR(String),
     /// `ATSC_content_identifier()` structure as defined in [ATSC A/57B].
     ATSCContentIdentifier(ATSCContentIdentifier),

@@ -8,13 +8,13 @@ use crate::{bit_reader::Bits, error::ParseError};
 /// used in analogue systems for ad insertion. This descriptor is intended only for use with a
 /// `SpliceInsert` command, within a `SpliceInfoSection`.
 /**
-```
-// avail_descriptor() {
-//   splice_descriptor_tag  8 uimsbf
-//   descriptor_length      8 uimsbf
-//   identifier            32 uimsbf
-//   provider_avail_id     32 uimsbf
-// }
+```text
+avail_descriptor() {
+  splice_descriptor_tag  8 uimsbf
+  descriptor_length      8 uimsbf
+  identifier            32 uimsbf
+  provider_avail_id     32 uimsbf
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]

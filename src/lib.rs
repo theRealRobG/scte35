@@ -1,12 +1,12 @@
 //! # scte35
-//! scte35 is a SCTE35 parser that has been translated from Swift into Rust using my [SCTE35Parser](https://!github.com/theRealRobG/SCTE35Parser) implementation as a base.
+//! scte35 is a SCTE35 parser that has been translated from Swift into Rust using my [SCTE35Parser](https://github.com/theRealRobG/SCTE35Parser) implementation as a base.
 //!
 //! The 2020 SCTE-25 specification was used and can be found included in the Swift implementation repository.
 //!
 //! Not all data fields from the SCTE35 message are included in the output struct; where the field is informational for parsing instruction only it is ommitted from inclusion in the public model.
 //!
 //! ## Usage
-//! The primary integration point to the framework is the [`SpliceInfoSection`](./src/splice_info_section.rs#L53-L112) struct.
+//! The primary integration point to the framework is the [`SpliceInfoSection`](crate::splice_info_section::SpliceInfoSection) struct.
 //!
 //! Given a hex encoded string SCTE35 message, the `SpliceInfoSection` offers the `try_from_hex_string` that returns `Result<SpliceInfoSection, ParseError>`:
 //! ```

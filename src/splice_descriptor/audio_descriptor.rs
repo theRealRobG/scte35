@@ -15,21 +15,21 @@ use crate::{
 /// with a `TimeSignal` command and a segmentation descriptor with the type `program_start` or
 /// `program_overlap_start`.
 /**
-```
-// {
-//   splice_descriptor_tag            8 uimsbf
-//   descriptor_length                8 uimsbf
-//   identifier                      32 uimsbf
-//   audio_count                      4 uimsbf
-//   reserved                         4 bslbf
-//   for (i=0; i<audio_count; i++) {
-//     component_tag                  8 uimsbf
-//     ISO_code                      24 uimsbf
-//     Bit_Stream_Mode                3 uimsbf
-//     Num_Channels                   4 uimsbf
-//     Full_Srvc_Audio                1 uimsbf
-//   }
-// }
+```text
+{
+  splice_descriptor_tag            8 uimsbf
+  descriptor_length                8 uimsbf
+  identifier                      32 uimsbf
+  audio_count                      4 uimsbf
+  reserved                         4 bslbf
+  for (i=0; i<audio_count; i++) {
+    component_tag                  8 uimsbf
+    ISO_code                      24 uimsbf
+    Bit_Stream_Mode                3 uimsbf
+    Num_Channels                   4 uimsbf
+    Full_Srvc_Audio                1 uimsbf
+  }
+}
 ```
 */
 #[derive(PartialEq, Eq, Debug)]
