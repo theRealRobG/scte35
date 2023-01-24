@@ -1834,3 +1834,53 @@ fn test_time_signal_segmentation_descriptor_mid() {
         "unexpected splice info section from base64"
     );
 }
+
+#[test]
+fn test_time_signal_provider_ad_start_mpu() {
+    let hex_string = "0xFC309100000000000000FFF00506FF63EE6B06007B027943554549000000647FC30000F735E10C654E4243557B2261737365744964223A22706561636F636B5F363030313131222C2263756544617461223A7B2263756554797065223A227374616E646172645F627265616B222C226B6579223A227062222C2276616C7565223A227374616E64617264227D7D300000A9C80D12";
+    let expected_splice_info_section = SpliceInfoSection {
+        table_id: 252,
+        sap_type: SAPType::Unspecified,
+        protocol_version: 0,
+        encrypted_packet: None,
+        pts_adjustment: 0,
+        tier: 0xFFF,
+        splice_command: SpliceCommand::TimeSignal(TimeSignal {
+            splice_time: SpliceTime {
+                pts_time: Some(5971536646),
+            },
+        }),
+        splice_descriptors: vec![SpliceDescriptor::SegmentationDescriptor(
+            SegmentationDescriptor {
+                identifier: 1129661769,
+                event_id: 100,
+                scheduled_event: Some(segmentation_descriptor::ScheduledEvent {
+                    delivery_restrictions: Some(DeliveryRestrictions {
+                        web_delivery_allowed: false,
+                        no_regional_blackout: false,
+                        archive_allowed: false,
+                        device_restrictions: DeviceRestrictions::None,
+                    }),
+                    component_segments: None,
+                    segmentation_duration: Some(16201185),
+                    segmentation_upid: SegmentationUPID::MPU(ManagedPrivateUPID {
+                        format_specifier: String::from("NBCU"),
+                        private_data: BASE64_STANDARD.decode("eyJhc3NldElkIjoicGVhY29ja182MDAxMTEiLCJjdWVEYXRhIjp7ImN1ZVR5cGUiOiJzdGFuZGFyZF9icmVhayIsImtleSI6InBiIiwidmFsdWUiOiJzdGFuZGFyZCJ9fQ==").unwrap(),
+                    }),
+                    segmentation_type_id: SegmentationTypeID::ProviderAdvertisementStart,
+                    segment_num: 0,
+                    segments_expected: 0,
+                    sub_segment: None,
+                }),
+            },
+        )],
+        crc_32: 0xA9C80D12,
+        non_fatal_errors: vec![],
+    };
+    assert_eq!(
+        &expected_splice_info_section,
+        &SpliceInfoSection::try_from_hex_string(hex_string)
+            .expect("should be valid splice info section from hex"),
+        "unexpected splice info section from hex"
+    );
+}
